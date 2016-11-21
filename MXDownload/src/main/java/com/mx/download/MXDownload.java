@@ -21,8 +21,13 @@ public class MXDownload {
         downloadHelper = new DownloadHelper();
     }
 
-    public MXDownload download(String fromUrl, String toPath) {
-        downloadHelper.setSavePath(fromUrl, toPath);
+    public MXDownload download(String fromUrl) {
+        downloadHelper.setFromUrl(fromUrl);
+        return this;
+    }
+
+    public MXDownload save(String toPath) {
+        downloadHelper.setToPath(toPath);
         return this;
     }
 

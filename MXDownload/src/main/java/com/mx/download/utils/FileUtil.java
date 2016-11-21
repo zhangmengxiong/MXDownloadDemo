@@ -2,6 +2,7 @@ package com.mx.download.utils;
 
 import com.mx.download.model.ChipSaveMod;
 import com.mx.download.model.DownChipBean;
+import com.mx.download.model.DownloadStatus;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -120,6 +121,7 @@ public class FileUtil {
             int spilSize = Integer.valueOf(dis.readLine());// 获取下载位置的数目，即有多少个开始位置，多少个结束位置
             result.fileSize = Long.valueOf(dis.readLine());
             result.completeSize = Long.valueOf(dis.readLine());
+            result.LastModify = dis.readLine();
 
             result.downChipBeen = new DownChipBean[spilSize];
             for (int i = 0; i < spilSize; i++) {
@@ -140,13 +142,14 @@ public class FileUtil {
      *
      * @param positionFile
      * @param chipBeens
-     * @param fileSize
+     * @param status
      */
-    public static void writeDownloadPosition(File positionFile, DownChipBean[] chipBeens, long fileSize) {
+    public static void writeDownloadPosition(File positionFile, DownChipBean[] chipBeens, DownloadStatus status) {
         try {
             DataOutputStream dos = new DataOutputStream(new FileOutputStream(positionFile));
             dos.writeBytes("" + chipBeens.length + "\r\n");
-            dos.writeBytes("" + fileSize + "\r\n");
+            dos.writeBytes("" + status.getTotalSize() + "\r\n");
+            dos.writeBytes("" + status.getLastModify() + "\r\n");
 
             long complete = 0L;
             for (DownChipBean chipBeen : chipBeens) {

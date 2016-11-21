@@ -120,16 +120,28 @@ class Download {
 
         if (positionFile.exists() && positionFile.length() > 0) // 如果缓存文件已经存在，表明之前已经下载过一部分
         {
+            boolean reset = false;
+
             ChipSaveMod saveMod = FileUtil.readDownloadPosition(positionFile);// 读取缓存文件中的下载位置，即每个下载线程的开始位置和结束位置，将读取到的下载位置写入到开始数组和结束数组
             if (saveMod != null) {
-                chipBeens = saveMod.downChipBeen;
-                downloadStatus.setDownloadSize(saveMod.completeSize);
-                if (downloadStatus.getTotalSize() != saveMod.fileSize) {// 服务器与本地大小不一致，删掉重新下载
+                if (downloadStatus.getTotalSize() != saveMod.fileSize) {
+                    if (MXDownload.DEBUG)
+                        System.out.print("网络上文件的大小和本地断点记录不一样，重置下载：" + desFile.getName());
+                    reset = true;
+                }
+
+                if (!downloadStatus.getLastModify().equals(saveMod.LastModify)) {
+                    if (MXDownload.DEBUG)
+                        System.out.print("网络上文件的修改时间和本地断点记录不一样，重置下载：" + desFile.getName());
+                    reset = true;
+                }
+                if (reset) {
                     downloadStatus.setDownloadSize(0);
                     FileUtil.resetFile(cacheFile);
                     FileUtil.resetFile(positionFile);
-                    if (MXDownload.DEBUG)
-                        System.out.print("网络上文件的大小和本地断点记录不一样，重置下载：" + desFile.getName());
+                } else {
+                    chipBeens = saveMod.downChipBeen;
+                    downloadStatus.setDownloadSize(saveMod.completeSize);
                 }
             }
         }
@@ -208,7 +220,7 @@ class Download {
         }
         updatePosition();// 更新下载位置信息
 
-        FileUtil.writeDownloadPosition(positionFile, chipBeens, downloadStatus.getTotalSize());
+        FileUtil.writeDownloadPosition(positionFile, chipBeens, downloadStatus);
         boolean isDownFinish = true;
         for (int i = 0; i < chipBeens.length; i++)// 判断是否所有下载线程都执行结束
         {

@@ -14,24 +14,16 @@ import com.mx.download.utils.IDownLoadCall;
 
 import java.io.File;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MainActivity extends Activity {
 
-    @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
-    @BindView(R.id.curSize)
     TextView curSize;
 
-    @BindView(R.id.maxSize)
     TextView maxSize;
 
-    @BindView(R.id.start)
     Button start;
 
-    @BindView(R.id.stop)
     Button stop;
 
     MXDownload mxDownload;
@@ -40,16 +32,22 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        curSize = (TextView) findViewById(R.id.curSize);
+        maxSize = (TextView) findViewById(R.id.maxSize);
+        start = (Button) findViewById(R.id.start);
+        stop = (Button) findViewById(R.id.stop);
+
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mxDownload == null) {
                     new File("/sdcard/weixin.apk").delete();
                     mxDownload = MXDownload.getInstance()
-                            .download("http://a6.pc6.com/kha5/laojiumen.360.apk", "/sdcard/weixin.apk")
-                            .maxThread(6)
-                            .maxRetryCount(6)
+                            .download("http://a6.pc6.com/kha5/laojiumen.360.apk")
+                            .save("/sdcard/weixin.apk")
+                            .maxThread(3)
+                            .maxRetryCount(3)
                             .addMainThreadCall(new IDownLoadCall() {
                                 @Override
                                 public void onPrepare(String url) {

@@ -7,5 +7,6 @@ package com.mx.download.model;
 public class ChipSaveMod {
     public long fileSize;
     public long completeSize;
+    public String LastModify = null;
     public DownChipBean[] downChipBeen;
 }

@@ -34,11 +34,12 @@ class DownloadHelper {
     DownloadHelper() {
     }
 
-
-    void setSavePath(String fromUrl, String toPath) {
+    public void setFromUrl(String fromUrl) {
         this.fromUrl = fromUrl;
-        this.toPath = toPath;
+    }
 
+    public void setToPath(String toPath) {
+        this.toPath = toPath;
         if (!TextUtils.isEmpty(toPath)) {
             tempFile = concat(toPath, TMP_SUFFIX).toString();
             cacheFile = concat(toPath, CACHE_SUFFIX).toString();

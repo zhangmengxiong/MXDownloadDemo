@@ -22,6 +22,4 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':MXDownload')
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
 }

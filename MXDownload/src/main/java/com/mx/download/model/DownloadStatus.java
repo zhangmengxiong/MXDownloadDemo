@@ -11,6 +11,7 @@ import static com.mx.download.utils.Utils.formatSize;
  */
 public class DownloadStatus {
     public boolean isChunked = false; // 未知大小的文件
+    private String lastModify = "";
     private long totalSize = 0L;
     private long downloadSize = 0L;
 
@@ -31,6 +32,14 @@ public class DownloadStatus {
 
     public void setDownloadSize(long downloadSize) {
         this.downloadSize = downloadSize;
+    }
+
+    public void setLastModify(String lastModify) {
+        this.lastModify = lastModify;
+    }
+
+    public String getLastModify() {
+        return lastModify;
     }
 
     /**

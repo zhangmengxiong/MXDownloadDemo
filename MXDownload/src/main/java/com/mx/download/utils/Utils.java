@@ -84,6 +84,10 @@ public class Utils {
         return Long.parseLong((length == null || length.length() <= 0) ? "-1" : length);
     }
 
+    static String getLastModify(HttpURLConnection connection) {
+        return connection.getHeaderField("Last-Modified");
+    }
+
     /**
      * 从网络上获取文件的大小
      *
@@ -98,6 +102,8 @@ public class Utils {
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {
                 status = new DownloadStatus();
+                status.setLastModify(getLastModify(conn));
+
                 long contentLength = getContentLength(conn);
                 boolean isChunked = !android.text.TextUtils.isEmpty(transferEncoding(conn));
                 if (isChunked || contentLength == -1) {
