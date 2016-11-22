@@ -17,26 +17,6 @@ import java.io.RandomAccessFile;
  */
 public class FileUtil {
     /**
-     * 获取缓存文件路径
-     *
-     * @param toPath
-     * @return
-     */
-    public static String getDownCacheFile(String toPath) {
-        return toPath + ".tmp";
-    }
-
-    /**
-     * 获取断点续传文件路径
-     *
-     * @param toPath
-     * @return
-     */
-    public static String getPositionFile(String toPath) {
-        return toPath + ".pos";
-    }
-
-    /**
      * 将文件分段，返回分段的数组
      *
      * @param fileLength
@@ -149,13 +129,13 @@ public class FileUtil {
             DataOutputStream dos = new DataOutputStream(new FileOutputStream(positionFile));
             dos.writeBytes("" + chipBeens.length + "\r\n");
             dos.writeBytes("" + status.getTotalSize() + "\r\n");
-            dos.writeBytes("" + status.getLastModify() + "\r\n");
 
             long complete = 0L;
             for (DownChipBean chipBeen : chipBeens) {
                 complete = complete + chipBeen.completeSize;
             }
             dos.writeBytes("" + complete + "\r\n");
+            dos.writeBytes("" + status.getLastModify() + "\r\n");
 
             for (DownChipBean chipBeen : chipBeens) {
                 dos.writeBytes(chipBeen.toSaveString() + "\r\n");

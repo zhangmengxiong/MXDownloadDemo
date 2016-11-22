@@ -7,7 +7,7 @@ import com.mx.download.model.DownloadStatus;
 import com.mx.download.utils.IDownLoadCall;
 
 public class MXDownload {
-    private static final String TAG = MXDownload.class.getSimpleName();
+    private final String TAG = MXDownload.class.getSimpleName();
     public static boolean DEBUG = true;
     private DownloadHelper downloadHelper;
     private Download download;
@@ -28,6 +28,11 @@ public class MXDownload {
 
     public MXDownload save(String toPath) {
         downloadHelper.setToPath(toPath);
+        return this;
+    }
+
+    public MXDownload singleThread() {
+        downloadHelper.setMaxThreads(1);
         return this;
     }
 
@@ -138,18 +143,19 @@ public class MXDownload {
         downloadHelper.getExecutorService().execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    cancel();
-                    download = new Download(downloadHelper);
-                    download.startRun();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (downloadHelper.getDownLoadCall() != null)
-                        downloadHelper.getDownLoadCall().onError(e);
-                } finally {
-                    cancel();
-
-                    downloadHelper.getExecutorService().shutdownNow();
+                synchronized (TAG) {
+                    try {
+                        cancel();
+                        download = new Download(downloadHelper);
+                        download.startRun();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (downloadHelper.getDownLoadCall() != null)
+                            downloadHelper.getDownLoadCall().onError(e);
+                    } finally {
+                        cancel();
+                        downloadHelper.getExecutorService().shutdownNow();
+                    }
                 }
             }
         });

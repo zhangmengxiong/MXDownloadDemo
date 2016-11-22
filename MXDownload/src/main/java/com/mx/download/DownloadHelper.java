@@ -21,7 +21,7 @@ class DownloadHelper {
 
     private ExecutorService executorService = Executors.newFixedThreadPool(3);
     private int MAX_THREADS = 3;
-    private int MAX_RETRY_COUNT = 3;
+    private int MAX_RETRY_COUNT = -1;
 
     private IDownLoadCall iDownLoadCall;
     private String fromUrl;
@@ -65,8 +65,10 @@ class DownloadHelper {
     void setMaxThreads(int max) {
         if (max < 1) max = 1;
         this.MAX_THREADS = max;
+    }
 
-        MAX_RETRY_COUNT = max * 3;
+    boolean isSingleThread() {
+        return MAX_THREADS == 1;
     }
 
     void setMaxRetryCount(int max) {
@@ -74,7 +76,7 @@ class DownloadHelper {
     }
 
     public int getMaxRetryCount() {
-        return MAX_RETRY_COUNT;
+        return (MAX_RETRY_COUNT < 0 ? MAX_THREADS * 3 : MAX_RETRY_COUNT);
     }
 
     void addCall(IDownLoadCall iDownLoadCall) {

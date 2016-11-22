@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
                     mxDownload = MXDownload.getInstance()
                             .download("http://a6.pc6.com/kha5/laojiumen.360.apk")
                             .save("/sdcard/weixin.apk")
-                            .maxThread(3)
+                            .maxThread(6)
                             .maxRetryCount(3)
                             .addMainThreadCall(new IDownLoadCall() {
                                 @Override
