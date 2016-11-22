@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
                             .save("/sdcard/weixin.apk")
                             .maxThread(6)
                             .maxRetryCount(3)
+                            .singleThread()
                             .addMainThreadCall(new IDownLoadCall() {
                                 @Override
                                 public void onPrepare(String url) {

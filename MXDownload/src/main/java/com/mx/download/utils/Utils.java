@@ -75,8 +75,9 @@ public class Utils {
         }
     }
 
-    static String transferEncoding(HttpURLConnection connection) {
-        return connection.getHeaderField("Transfer-Encoding");
+    static boolean isChunked(HttpURLConnection connection) {
+        String range = connection.getHeaderField("Transfer-Encoding");
+        return range != null && range.equalsIgnoreCase("chunked");
     }
 
     static long getContentLength(HttpURLConnection connection) {
@@ -86,6 +87,11 @@ public class Utils {
 
     static String getLastModify(HttpURLConnection connection) {
         return connection.getHeaderField("Last-Modified");
+    }
+
+    static boolean isAcceptRanges(HttpURLConnection connection) {
+        String range = connection.getHeaderField("Accept-Ranges");
+        return range != null && range.equalsIgnoreCase("bytes");
     }
 
     /**
@@ -104,13 +110,12 @@ public class Utils {
                 status = new DownloadStatus();
                 status.setLastModify(getLastModify(conn));
 
-                long contentLength = getContentLength(conn);
-                boolean isChunked = !android.text.TextUtils.isEmpty(transferEncoding(conn));
-                if (isChunked || contentLength == -1) {
-                    status.isChunked = true;
-                }
+                long maxSize = getContentLength(conn);
+                status.isChunked = (isChunked(conn) || maxSize <= 0);
+                status.isAcceptRanges = isAcceptRanges(conn);
+
                 status.setDownloadSize(0L);
-                status.setTotalSize(contentLength);
+                status.setTotalSize(maxSize);
             }
         } catch (Exception e) {
             e.printStackTrace();

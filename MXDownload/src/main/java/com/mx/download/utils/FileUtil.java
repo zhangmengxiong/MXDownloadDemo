@@ -2,14 +2,15 @@ package com.mx.download.utils;
 
 import com.mx.download.model.ChipSaveMod;
 import com.mx.download.model.DownChipBean;
+import com.mx.download.model.DownType;
 import com.mx.download.model.DownloadStatus;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 
 /**
@@ -94,53 +95,60 @@ public class FileUtil {
      * @return
      */
     public static ChipSaveMod readDownloadPosition(File positionFile) {
-        ChipSaveMod result = new ChipSaveMod();
-
         try {
-            DataInputStream dis = new DataInputStream(new FileInputStream(positionFile));
-            int spilSize = Integer.valueOf(dis.readLine());// 获取下载位置的数目，即有多少个开始位置，多少个结束位置
-            result.fileSize = Long.valueOf(dis.readLine());
-            result.completeSize = Long.valueOf(dis.readLine());
-            result.LastModify = dis.readLine();
-
-            result.downChipBeen = new DownChipBean[spilSize];
-            for (int i = 0; i < spilSize; i++) {
-                result.downChipBeen[i] = DownChipBean.fromString(dis.readLine());
-                if (result.downChipBeen[i] == null) return null;
-            }
-
-            dis.close();
+            ObjectInputStream oin = new ObjectInputStream(new FileInputStream(positionFile));
+            Object obj = oin.readObject(); // 没有强制转换到Person类型
+            oin.close();
+            return (ChipSaveMod) obj;
         } catch (Exception e) {
             e.printStackTrace();
-            result = null;
         }
-        return result;
+        return null;
     }
 
     /**
      * 将断点信息写入文件
      *
      * @param positionFile
-     * @param chipBeens
+     * @param been
      * @param status
      */
-    public static void writeDownloadPosition(File positionFile, DownChipBean[] chipBeens, DownloadStatus status) {
+    public static void writeMulityPosition(File positionFile, DownChipBean[] been, DownloadStatus status) {
         try {
-            DataOutputStream dos = new DataOutputStream(new FileOutputStream(positionFile));
-            dos.writeBytes("" + chipBeens.length + "\r\n");
-            dos.writeBytes("" + status.getTotalSize() + "\r\n");
+            ChipSaveMod saveMod = new ChipSaveMod();
+            saveMod.downChipBeen = been;
+            saveMod.type = DownType.TYPE_MULITY;
+            saveMod.LastModify = status.getLastModify();
+            saveMod.fileSize = status.getTotalSize();
+            saveMod.completeSize = status.getDownloadSize();
 
-            long complete = 0L;
-            for (DownChipBean chipBeen : chipBeens) {
-                complete = complete + chipBeen.completeSize;
-            }
-            dos.writeBytes("" + complete + "\r\n");
-            dos.writeBytes("" + status.getLastModify() + "\r\n");
+            ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(positionFile));
+            stream.writeObject(saveMod);
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            for (DownChipBean chipBeen : chipBeens) {
-                dos.writeBytes(chipBeen.toSaveString() + "\r\n");
-            }
-            dos.close();
+    /**
+     * 将断点信息写入文件
+     *
+     * @param positionFile
+     * @param chipBean
+     * @param status
+     */
+    public static void writeSinglePosition(File positionFile, DownChipBean chipBean, DownloadStatus status) {
+        try {
+            ChipSaveMod saveMod = new ChipSaveMod();
+            saveMod.downChipBeen = new DownChipBean[]{chipBean};
+            saveMod.type = DownType.TYPE_MULITY;
+            saveMod.LastModify = status.getLastModify();
+            saveMod.fileSize = status.getTotalSize();
+            saveMod.completeSize = status.getDownloadSize();
+
+            ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(positionFile));
+            stream.writeObject(saveMod);
+            stream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

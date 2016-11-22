@@ -1,4 +1,4 @@
-package com.mx.download;
+package com.mx.download.model;
 
 import android.text.TextUtils;
 
@@ -15,7 +15,7 @@ import static android.text.TextUtils.concat;
  * 联系方式: zmx_final@163.com
  */
 
-class DownloadHelper {
+public class DownloadBean {
     private static final String TMP_SUFFIX = ".tmp";  //temp file
     private static final String CACHE_SUFFIX = ".cache";  //last modify file
 
@@ -31,7 +31,7 @@ class DownloadHelper {
     private String cacheFile;
 
 
-    DownloadHelper() {
+    public DownloadBean() {
     }
 
     public void setFromUrl(String fromUrl) {
@@ -46,32 +46,32 @@ class DownloadHelper {
         }
     }
 
-    String getFromUrl() {
+    public String getFromUrl() {
         return fromUrl;
     }
 
-    String getToPath() {
+    public String getToPath() {
         return toPath;
     }
 
-    String getTempFile() {
+    public String getTempFile() {
         return tempFile;
     }
 
-    String getCacheFile() {
+    public String getCacheFile() {
         return cacheFile;
     }
 
-    void setMaxThreads(int max) {
+    public void setMaxThreads(int max) {
         if (max < 1) max = 1;
         this.MAX_THREADS = max;
     }
 
-    boolean isSingleThread() {
+    public boolean isSingleThread() {
         return MAX_THREADS == 1;
     }
 
-    void setMaxRetryCount(int max) {
+    public void setMaxRetryCount(int max) {
         this.MAX_RETRY_COUNT = max;
     }
 
@@ -79,15 +79,15 @@ class DownloadHelper {
         return (MAX_RETRY_COUNT < 0 ? MAX_THREADS * 3 : MAX_RETRY_COUNT);
     }
 
-    void addCall(IDownLoadCall iDownLoadCall) {
+    public void addCall(IDownLoadCall iDownLoadCall) {
         this.iDownLoadCall = iDownLoadCall;
     }
 
-    IDownLoadCall getDownLoadCall() {
+    public IDownLoadCall getDownLoadCall() {
         return iDownLoadCall;
     }
 
-    synchronized ExecutorService getExecutorService() {
+    public synchronized ExecutorService getExecutorService() {
         if (executorService == null || executorService.isShutdown())
             executorService = Executors.newFixedThreadPool(MAX_THREADS + 1);
         return executorService;

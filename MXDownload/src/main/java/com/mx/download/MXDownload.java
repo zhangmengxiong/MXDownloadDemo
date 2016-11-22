@@ -3,13 +3,15 @@ package com.mx.download;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.mx.download.model.DownloadBean;
 import com.mx.download.model.DownloadStatus;
 import com.mx.download.utils.IDownLoadCall;
 
 public class MXDownload {
     private final String TAG = MXDownload.class.getSimpleName();
     public static boolean DEBUG = true;
-    private DownloadHelper downloadHelper;
+    private DownloadBean downloadBean;
+    private IDownLoadCall iDownLoadCall;
     private Download download;
     private Handler mHandler;
 
@@ -18,21 +20,21 @@ public class MXDownload {
     }
 
     private MXDownload() {
-        downloadHelper = new DownloadHelper();
+        downloadBean = new DownloadBean();
     }
 
     public MXDownload download(String fromUrl) {
-        downloadHelper.setFromUrl(fromUrl);
+        downloadBean.setFromUrl(fromUrl);
         return this;
     }
 
     public MXDownload save(String toPath) {
-        downloadHelper.setToPath(toPath);
+        downloadBean.setToPath(toPath);
         return this;
     }
 
     public MXDownload singleThread() {
-        downloadHelper.setMaxThreads(1);
+        downloadBean.setMaxThreads(1);
         return this;
     }
 
@@ -42,30 +44,32 @@ public class MXDownload {
      * @param iDownLoadCall
      * @return
      */
-    public MXDownload addCall(final IDownLoadCall iDownLoadCall) {
-        downloadHelper.addCall(iDownLoadCall);
+    public MXDownload addCall(IDownLoadCall iDownLoadCall) {
+        this.iDownLoadCall = iDownLoadCall;
+        downloadBean.addCall(iDownLoadCall);
         return this;
     }
 
     /**
      * 主线程回调方法
      *
-     * @param iDownLoadCall
+     * @param call
      * @return
      */
-    public MXDownload addMainThreadCall(final IDownLoadCall iDownLoadCall) {
-        if (mHandler == null) {
-            if (Looper.myLooper() != Looper.getMainLooper()) {
-                Looper.prepare();
-                mHandler = new Handler();
-                Looper.loop();
-            } else {
-                mHandler = new Handler();
+    public MXDownload addMainThreadCall(IDownLoadCall call) {
+        this.iDownLoadCall = call;
+        if (iDownLoadCall != null) {
+            if (mHandler == null) {
+                if (Looper.myLooper() != Looper.getMainLooper()) {
+                    Looper.prepare();
+                    mHandler = new Handler();
+                    Looper.loop();
+                } else {
+                    mHandler = new Handler();
+                }
             }
-        }
 
-        if (iDownLoadCall != null)
-            downloadHelper.addCall(new IDownLoadCall() {
+            downloadBean.addCall(new IDownLoadCall() {
                 @Override
                 public void onPrepare(final String url) {
                     mHandler.post(new Runnable() {
@@ -126,35 +130,38 @@ public class MXDownload {
                     });
                 }
             });
+        }
         return this;
     }
 
     public MXDownload maxThread(int max) {
-        downloadHelper.setMaxThreads(max);
+        downloadBean.setMaxThreads(max);
         return this;
     }
 
     public MXDownload maxRetryCount(int max) {
-        downloadHelper.setMaxRetryCount(max);
+        downloadBean.setMaxRetryCount(max);
         return this;
     }
 
     public MXDownload start() {
-        downloadHelper.getExecutorService().execute(new Runnable() {
+        if (download != null) return this;
+        downloadBean.getExecutorService().execute(new Runnable() {
             @Override
             public void run() {
                 synchronized (TAG) {
+                    if (download != null) return;
                     try {
-                        cancel();
-                        download = new Download(downloadHelper);
+                        download = new Download(downloadBean);
                         download.startRun();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        if (downloadHelper.getDownLoadCall() != null)
-                            downloadHelper.getDownLoadCall().onError(e);
+                        if (downloadBean.getDownLoadCall() != null)
+                            downloadBean.getDownLoadCall().onError(e);
                     } finally {
                         cancel();
-                        downloadHelper.getExecutorService().shutdownNow();
+                        download = null;
+                        downloadBean.getExecutorService().shutdownNow();
                     }
                 }
             }
@@ -163,7 +170,10 @@ public class MXDownload {
     }
 
     public void cancel() {
-        if (download != null)
-            download.cancel();
+        try {
+            if (download != null)
+                download.cancel();
+        } catch (Exception ignored) {
+        }
     }
 }

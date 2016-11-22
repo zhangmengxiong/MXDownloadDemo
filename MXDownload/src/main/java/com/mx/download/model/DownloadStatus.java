@@ -14,6 +14,7 @@ public class DownloadStatus {
     private String lastModify = "";
     private long totalSize = 0L;
     private long downloadSize = 0L;
+    public boolean isAcceptRanges = true;
 
     public DownloadStatus() {
     }
@@ -62,6 +63,14 @@ public class DownloadStatus {
      */
     public String getFormatStatusString() {
         return getFormatDownloadSize() + "/" + getFormatTotalSize();
+    }
+
+    public boolean isChunked() {
+        return isChunked;
+    }
+
+    public boolean isSupportRanges() {
+        return isAcceptRanges;
     }
 
     /**

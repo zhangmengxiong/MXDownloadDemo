@@ -2,16 +2,26 @@ package com.mx.download.model;
 
 import android.text.TextUtils;
 
+import java.io.Serializable;
+
 /**
  * 下载碎片
  * Created by zmx_f on 2016-5-12.
  */
-public class DownChipBean {
+public class DownChipBean implements Serializable {
     public long start = 0L;
     public long end = 0L;
 
     public long completeSize = 0L;
     public int index;
+
+    public DownChipBean() {
+    }
+
+    public DownChipBean(long s, long e) {
+        start = s;
+        end = e;
+    }
 
     public boolean isComplete() {
         return completeSize >= end - start;

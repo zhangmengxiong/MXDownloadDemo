@@ -1,6 +1,7 @@
 //下载线程
-package com.mx.download;
+package com.mx.download.factory.run;
 
+import com.mx.download.MXDownload;
 import com.mx.download.model.DownChipBean;
 
 import java.io.File;
@@ -8,7 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-class DownloadRun implements Runnable {
+public class MulityDownloadRun implements Runnable {
     private static final int TIME_OUT = 15 * 1000;// 超时
     private String sourceUrl;// 资源路径
     private String savePath;
@@ -17,7 +18,7 @@ class DownloadRun implements Runnable {
     private boolean isStop = false;// 该线程外部停止标记
     private boolean errorTag = false;// 该线程外部停止标记
 
-    DownloadRun(String fromUrl, String savePath, DownChipBean chipBeen) {
+    public MulityDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen) {
         this.sourceUrl = fromUrl;
         this.savePath = savePath;
         this.chipBeen = chipBeen;
@@ -73,16 +74,16 @@ class DownloadRun implements Runnable {
             System.out.println(fileName + " -- " + "执行结束:" + chipBeen);
     }
 
-    boolean isDownloadOver()// 返回该线程下载是否完成的标志
+    public boolean isDownloadOver()// 返回该线程下载是否完成的标志
     {
         return chipBeen.isComplete();
     }
 
-    void stop() {
+    public void stop() {
         this.isStop = true;
     }
 
-    boolean isInError() {
+    public boolean isInError() {
         return errorTag;
     }
 }

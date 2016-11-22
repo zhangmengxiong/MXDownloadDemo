@@ -1,5 +1,5 @@
 //写入文件内容
-package com.mx.download;
+package com.mx.download.factory.run;
 
 import com.mx.download.utils.Utils;
 
@@ -15,16 +15,18 @@ class SaveFile {
         save.seek(start);
 
         maxSize = end - start + 1;
+        if (end <= 0) maxSize = -1;
     }
 
     void write(byte[] buff, int length) throws Exception// 写入文件内容
     {
-
-        if (curSize + length > maxSize) {
-            length = (int) (maxSize - curSize);
-            curSize = maxSize;
-        } else {
-            curSize = curSize + length;
+        if (maxSize > 0) {
+            if (curSize + length > maxSize) {
+                length = (int) (maxSize - curSize);
+                curSize = maxSize;
+            } else {
+                curSize = curSize + length;
+            }
         }
         save.write(buff, 0, length);
     }
