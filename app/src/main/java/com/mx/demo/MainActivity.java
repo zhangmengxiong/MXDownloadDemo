@@ -47,8 +47,9 @@ public class MainActivity extends Activity {
                     mxDownload = MXDownload.getInstance()
 //                            .download("http://a6.pc6.com/kha5/laojiumen.360.apk") // 200M
 //                            .download("http://www.baidu.com")
-                            .download("https://downpack.baidu.com/appsearch_AndroidPhone_1012271b.apk") // 6M
+//                            .download("https://downpack.baidu.com/appsearch_AndroidPhone_1012271b.apk") // 6M
 //                            .download("http://bos.pgzs.com/sjapp91/pcsuite/plugin/91assistant_pc_008.exe")
+                            .download("http://p.gdown.baidu.com/208d79de0e27195f1538926fee90cd006fd83c5ede297065043615fd7fa4ce901fa4a5267970131df4cc5f34cd34cfc7baa9f64924b13f56ced2c34faa295baed1ce6fbd53eb610636bbcc7be4a2b1c38f498ee916dfa66171a4395e1ff8116e596ec5c35fcb3eb2")
                             .save("/sdcard/weixin.apk")
                             .maxThread(3)
                             .maxRetryCount(3)
@@ -87,7 +88,7 @@ public class MainActivity extends Activity {
 
                                 @Override
                                 public void onFinish() {
-
+                                    Log.v("proc", "onFinish");
                                 }
 
                                 @Override

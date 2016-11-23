@@ -101,7 +101,8 @@ public class MXDownload {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            iDownLoadCall.onPrepare(url);
+                            if (iDownLoadCall != null)
+                                iDownLoadCall.onPrepare(url);
                         }
                     });
                 }
@@ -111,7 +112,8 @@ public class MXDownload {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            iDownLoadCall.onStart(status);
+                            if (iDownLoadCall != null)
+                                iDownLoadCall.onStart(status);
                         }
                     });
                 }
@@ -121,7 +123,8 @@ public class MXDownload {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            iDownLoadCall.onError(th);
+                            if (iDownLoadCall != null)
+                                iDownLoadCall.onError(th);
                         }
                     });
                 }
@@ -131,7 +134,8 @@ public class MXDownload {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            iDownLoadCall.onProgressUpdate(status);
+                            if (iDownLoadCall != null)
+                                iDownLoadCall.onProgressUpdate(status);
                         }
                     });
                 }
@@ -141,7 +145,8 @@ public class MXDownload {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            iDownLoadCall.onSuccess(url);
+                            if (iDownLoadCall != null)
+                                iDownLoadCall.onSuccess(url);
                         }
                     });
                 }
@@ -151,7 +156,19 @@ public class MXDownload {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            iDownLoadCall.onCancel(url);
+                            if (iDownLoadCall != null)
+                                iDownLoadCall.onCancel(url);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFinish() {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (iDownLoadCall != null)
+                                iDownLoadCall.onFinish();
                         }
                     });
                 }

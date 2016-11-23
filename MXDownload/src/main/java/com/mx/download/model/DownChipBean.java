@@ -31,7 +31,7 @@ public class DownChipBean implements Serializable {
     public String toString() {
         float p = (100 * completeSize / (float) (end - start));
         if (isComplete()) p = 100;
-        return ("[线程 -" + index + "- 下载 " + p + "%]");
+        return ("[thread " + index + " --> " + p + "%]");
     }
 
     /**
