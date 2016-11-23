@@ -1,9 +1,9 @@
 package com.mx.download.utils;
 
-import com.mx.download.model.ChipSaveMod;
+import com.mx.download.model.SaveBean;
 import com.mx.download.model.DownChipBean;
 import com.mx.download.model.DownType;
-import com.mx.download.model.UrlInfoBean;
+import com.mx.download.model.InfoBean;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,12 +94,12 @@ public class FileUtil {
      * @param positionFile
      * @return
      */
-    public static ChipSaveMod readDownloadPosition(File positionFile) {
+    public static SaveBean readDownloadPosition(File positionFile) {
         try {
             ObjectInputStream oin = new ObjectInputStream(new FileInputStream(positionFile));
             Object obj = oin.readObject(); // 没有强制转换到Person类型
             oin.close();
-            return (ChipSaveMod) obj;
+            return (SaveBean) obj;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,9 +113,9 @@ public class FileUtil {
      * @param been
      * @param status
      */
-    public static void writeMulityPosition(File positionFile, DownChipBean[] been, UrlInfoBean status) {
+    public static void writeMulityPosition(File positionFile, DownChipBean[] been, InfoBean status) {
         try {
-            ChipSaveMod saveMod = new ChipSaveMod();
+            SaveBean saveMod = new SaveBean();
             saveMod.downChipBeen = been;
             saveMod.type = DownType.TYPE_MULITY;
             saveMod.LastModify = status.getLastModify();
@@ -137,9 +137,9 @@ public class FileUtil {
      * @param chipBean
      * @param status
      */
-    public static void writeSinglePosition(File positionFile, DownChipBean chipBean, UrlInfoBean status) {
+    public static void writeSinglePosition(File positionFile, DownChipBean chipBean, InfoBean status) {
         try {
-            ChipSaveMod saveMod = new ChipSaveMod();
+            SaveBean saveMod = new SaveBean();
             saveMod.downChipBeen = new DownChipBean[]{chipBean};
             saveMod.type = DownType.TYPE_SINGLE;
             saveMod.LastModify = status.getLastModify();

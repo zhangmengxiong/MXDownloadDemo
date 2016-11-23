@@ -17,7 +17,7 @@ import static android.text.TextUtils.concat;
  * 联系方式: zmx_final@163.com
  */
 
-public class DownloadBean {
+public class ConfigBean {
     private static final String TMP_SUFFIX = ".tmp";  //temp file
     private static final String CACHE_SUFFIX = ".cache";  //last modify file
 
@@ -33,7 +33,7 @@ public class DownloadBean {
     private String cacheFile;
 
 
-    public DownloadBean() {
+    public ConfigBean() {
     }
 
     public void setFromUrl(String fromUrl) {

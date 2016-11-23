@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mx.download.MXDownload;
-import com.mx.download.model.UrlInfoBean;
+import com.mx.download.model.InfoBean;
 import com.mx.download.utils.IDownLoadCall;
 
 import java.io.File;
@@ -46,14 +46,13 @@ public class MainActivity extends Activity {
                     new File("/sdcard/weixin.apk").delete();
                     mxDownload = MXDownload.getInstance()
 //                            .download("http://a6.pc6.com/kha5/laojiumen.360.apk") // 200M
-//                            .download("http://www.baidu.com")
 //                            .download("https://downpack.baidu.com/appsearch_AndroidPhone_1012271b.apk") // 6M
 //                            .download("http://bos.pgzs.com/sjapp91/pcsuite/plugin/91assistant_pc_008.exe")
-                            .download("http://p.gdown.baidu.com/208d79de0e27195f1538926fee90cd006fd83c5ede297065043615fd7fa4ce901fa4a5267970131df4cc5f34cd34cfc7baa9f64924b13f56ced2c34faa295baed1ce6fbd53eb610636bbcc7be4a2b1c38f498ee916dfa66171a4395e1ff8116e596ec5c35fcb3eb2")
+                            .download("http://p.gdown.baidu.com/208d79de0e27195f1538926fee90cd006fd83c5ede297065043615fd7fa4ce901fa4a5267970131df4cc5f34cd34cfc7baa9f64924b13f56ced2c34faa295baed1ce6fbd53eb610636bbcc7be4a2b1c38f498ee916dfa66171a4395e1ff8116e596ec5c35fcb3eb2") //400M
                             .save("/sdcard/weixin.apk")
                             .maxThread(3)
                             .maxRetryCount(3)
-//                            .singleThread()
+                            .singleThread()
                             .addMainThreadCall(new IDownLoadCall() {
                                 @Override
                                 public void onPrepare(String url) {
@@ -63,7 +62,7 @@ public class MainActivity extends Activity {
                                 }
 
                                 @Override
-                                public void onStart(UrlInfoBean status) {
+                                public void onStart(InfoBean status) {
                                     Log.v("proc", "onStart");
                                     progressBar.setProgress((int) (status.getPercent() * 100));
                                 }
@@ -74,7 +73,7 @@ public class MainActivity extends Activity {
                                 }
 
                                 @Override
-                                public void onProgressUpdate(UrlInfoBean status) {
+                                public void onProgressUpdate(InfoBean status) {
                                     Log.v("proc", status.getFormatStatusString());
                                     progressBar.setProgress((int) (status.getPercent() * 100));
                                     curSize.setText(status.getFormatDownloadSize());

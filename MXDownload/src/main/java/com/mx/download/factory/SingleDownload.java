@@ -1,10 +1,10 @@
 package com.mx.download.factory;
 
 import com.mx.download.factory.run.SingleDownloadRun;
-import com.mx.download.model.ChipSaveMod;
+import com.mx.download.model.SaveBean;
 import com.mx.download.model.DownChipBean;
-import com.mx.download.model.DownloadBean;
-import com.mx.download.model.UrlInfoBean;
+import com.mx.download.model.ConfigBean;
+import com.mx.download.model.InfoBean;
 import com.mx.download.utils.FileUtil;
 import com.mx.download.utils.IDownLoadCall;
 import com.mx.download.utils.Log;
@@ -34,26 +34,26 @@ public class SingleDownload implements IDownload {
     private File desFile;
     private int errorNo = 0;
     private int retryMax = 3;
-    private UrlInfoBean urlInfoBean;
+    private InfoBean infoBean;
 
     @Override
-    public void setInfo(DownloadBean downloadBean, UrlInfoBean status) {
-        urlInfoBean = status;
+    public void setInfo(ConfigBean configBean, InfoBean status) {
+        infoBean = status;
 
-        this.retryMax = downloadBean.getMaxRetryCount();
-        this.executor = downloadBean.getExecutorService();
-        this.fromUrl = downloadBean.getFromUrl();
-        this.downloadCall = downloadBean.getDownLoadCall();
-        cacheFile = new File(downloadBean.getTempFile());
-        desFile = new File(downloadBean.getToPath());
-        positionFile = new File(downloadBean.getCacheFile());// 创建缓存文件，用于记录下载位置
+        this.retryMax = configBean.getMaxRetryCount();
+        this.executor = configBean.getExecutorService();
+        this.fromUrl = configBean.getFromUrl();
+        this.downloadCall = configBean.getDownLoadCall();
+        cacheFile = new File(configBean.getTempFile());
+        desFile = new File(configBean.getToPath());
+        positionFile = new File(configBean.getCacheFile());// 创建缓存文件，用于记录下载位置
 
         isUserCancel = false;
     }
 
     @Override
     public void prepareSave() throws Exception {
-        if (urlInfoBean.getTotalSize() + 1024 * 1024 * 5 > cacheFile.getFreeSpace()) {
+        if (infoBean.getTotalSize() + 1024 * 1024 * 5 > cacheFile.getFreeSpace()) {
             Log.v("剩余磁盘容量：" + Utils.formatSize(cacheFile.getFreeSpace()));
             throw new Exception("磁盘容量不足！");
         }
@@ -61,53 +61,53 @@ public class SingleDownload implements IDownload {
 
     @Override
     public void prepareHistory() throws Exception {
-        if (urlInfoBean.getTotalSize() <= 0) return;
+        if (infoBean.getTotalSize() <= 0) return;
 
         if (positionFile.exists() && positionFile.length() > 0) // 如果缓存文件已经存在，表明之前已经下载过一部分
         {
             boolean reset = false;
 
-            ChipSaveMod saveMod = FileUtil.readDownloadPosition(positionFile);// 读取缓存文件中的下载位置，即每个下载线程的开始位置和结束位置，将读取到的下载位置写入到开始数组和结束数组
+            SaveBean saveMod = FileUtil.readDownloadPosition(positionFile);// 读取缓存文件中的下载位置，即每个下载线程的开始位置和结束位置，将读取到的下载位置写入到开始数组和结束数组
             if (saveMod != null) {
-                if (urlInfoBean.getTotalSize() != saveMod.fileSize) {
+                if (infoBean.getTotalSize() != saveMod.fileSize) {
 
                     Log.v("网络上文件的大小和本地断点记录不一样，重置下载：" + desFile.getName());
                     reset = true;
                 }
 
-                if (!urlInfoBean.getLastModify().equals(saveMod.LastModify)) {
+                if (!infoBean.getLastModify().equals(saveMod.LastModify)) {
 
                     Log.v("网络上文件的修改时间和本地断点记录不一样，重置下载：" + desFile.getName());
                     reset = true;
                 }
                 if (reset) {
-                    urlInfoBean.setDownloadSize(0);
+                    infoBean.setDownloadSize(0);
                     FileUtil.resetFile(cacheFile);
                     FileUtil.resetFile(positionFile);
                 } else {
                     chipBean = saveMod.downChipBeen[0];
-                    urlInfoBean.setDownloadSize(saveMod.completeSize);
+                    infoBean.setDownloadSize(saveMod.completeSize);
                 }
             }
         }
 
-        Log.v("下载状态 = " + urlInfoBean.getFormatStatusString());
+        Log.v("下载状态 = " + infoBean.getFormatStatusString());
     }
 
     @Override
     public void prepareFirstInit() throws Exception {
-        if (urlInfoBean.getDownloadSize() <= 0) // 如果是刚开始下载
+        if (infoBean.getDownloadSize() <= 0) // 如果是刚开始下载
         {
             chipBean = new DownChipBean();// 获取下载位置
             chipBean.start = 0;
 
-            if (urlInfoBean.getTotalSize() > 0) {
-                chipBean.end = urlInfoBean.getTotalSize();
+            if (infoBean.getTotalSize() > 0) {
+                chipBean.end = infoBean.getTotalSize();
 
                 // 创建新文件
                 FileUtil.createFile(cacheFile);
                 RandomAccessFile accessFile = new RandomAccessFile(cacheFile.getAbsolutePath(), "rw");
-                accessFile.setLength(urlInfoBean.getTotalSize());
+                accessFile.setLength(infoBean.getTotalSize());
                 accessFile.close();
             }
         }
@@ -138,9 +138,9 @@ public class SingleDownload implements IDownload {
                 stop = false;// 只要有一个下载线程没有执行结束，则文件还没有下载完毕
             }
             try {
-                urlInfoBean.setDownloadSize(chipBean.completeSize);
+                infoBean.setDownloadSize(chipBean.completeSize);
                 if (downloadCall != null) {
-                    downloadCall.onProgressUpdate(urlInfoBean);
+                    downloadCall.onProgressUpdate(infoBean);
                 }
 
                 Thread.sleep(SLEEP_TIME);// 每隔0.5秒更新一次下载位置信息
@@ -155,7 +155,7 @@ public class SingleDownload implements IDownload {
         }
         updatePosition();// 更新下载位置信息
 
-        FileUtil.writeSinglePosition(positionFile, chipBean, urlInfoBean);
+        FileUtil.writeSinglePosition(positionFile, chipBean, infoBean);
         downloadThread.stop();
 
         if (isError) {
@@ -183,10 +183,10 @@ public class SingleDownload implements IDownload {
      * 计算下载完成的百分比
      */
     private synchronized void updatePosition() {
-        urlInfoBean.setDownloadSize(chipBean.completeSize);
+        infoBean.setDownloadSize(chipBean.completeSize);
 
         if (downloadCall != null) {
-            downloadCall.onProgressUpdate(urlInfoBean);
+            downloadCall.onProgressUpdate(infoBean);
         }
     }
 

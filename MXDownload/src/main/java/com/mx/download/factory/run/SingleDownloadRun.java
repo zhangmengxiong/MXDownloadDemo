@@ -65,6 +65,8 @@ public class SingleDownloadRun implements Runnable {
                 byte[] buff = new byte[1024 * 16];// 创建缓冲区
                 int length;
                 while (((length = is.read(buff)) > 0)) {
+                    if (isStop || Thread.interrupted()) break;
+
                     saveFile.write(buff, length); // 写入文件内容
                     chipBeen.addDownloadSize(length);
                 }

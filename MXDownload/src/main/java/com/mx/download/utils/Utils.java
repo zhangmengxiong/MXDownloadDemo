@@ -1,6 +1,6 @@
 package com.mx.download.utils;
 
-import com.mx.download.model.UrlInfoBean;
+import com.mx.download.model.InfoBean;
 
 import java.io.Closeable;
 import java.net.HttpURLConnection;
@@ -66,14 +66,14 @@ public class Utils {
      * @param fromUrl
      * @return
      */
-    public static UrlInfoBean getFileSize(String fromUrl) {
-        UrlInfoBean status = null;
+    public static InfoBean getFileSize(String fromUrl) {
+        InfoBean status = null;
         try {
             URL url = new URL(fromUrl);// 获取资源路径
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {
-                status = new UrlInfoBean();
+                status = new InfoBean();
                 status.setLastModify(getLastModify(conn));
 
                 long maxSize = getContentLength(conn);

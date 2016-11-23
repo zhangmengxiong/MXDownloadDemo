@@ -11,14 +11,14 @@ import static com.mx.download.utils.Utils.formatSize;
  * Time: 15:48
  * 表示下载状态, 如果isChunked为true, totalSize 可能不存在
  */
-public class UrlInfoBean {
+public class InfoBean {
     public boolean isChunked = false; // 未知大小的文件
     private String lastModify = "";
     private long totalSize = 0L;
     private long downloadSize = 0L;
     public boolean isAcceptRanges = true;
 
-    public UrlInfoBean() {
+    public InfoBean() {
     }
 
     public long getTotalSize() {

@@ -1,6 +1,6 @@
 package com.mx.download.utils;
 
-import com.mx.download.model.UrlInfoBean;
+import com.mx.download.model.InfoBean;
 
 public abstract class IDownLoadCall {
 
@@ -17,7 +17,7 @@ public abstract class IDownLoadCall {
      *
      * @param status 下载的信息
      */
-    public void onStart(UrlInfoBean status) {
+    public void onStart(InfoBean status) {
     }
 
     /**
@@ -25,7 +25,7 @@ public abstract class IDownLoadCall {
      *
      * @param status
      */
-    public void onProgressUpdate(UrlInfoBean status) {
+    public void onProgressUpdate(InfoBean status) {
     }
 
     /**

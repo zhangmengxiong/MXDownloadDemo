@@ -4,8 +4,8 @@ package com.mx.download;
 import com.mx.download.factory.IDownload;
 import com.mx.download.factory.MultiDownload;
 import com.mx.download.factory.SingleDownload;
-import com.mx.download.model.DownloadBean;
-import com.mx.download.model.UrlInfoBean;
+import com.mx.download.model.ConfigBean;
+import com.mx.download.model.InfoBean;
 import com.mx.download.utils.FileUtil;
 import com.mx.download.utils.IDownLoadCall;
 import com.mx.download.utils.Log;
@@ -20,7 +20,7 @@ import java.io.File;
  */
 class Download {
     private IDownLoadCall iDownLoadCall;
-    private DownloadBean downloadBean;
+    private ConfigBean configBean;
     private IDownload iDownload;
     private String fromUrl;
     private File positionFile;// 记录下载位置文件
@@ -28,16 +28,16 @@ class Download {
 
     private volatile boolean isUserCancel = false;
     private File cacheFile;
-    private UrlInfoBean urlInfoBean;
+    private InfoBean infoBean;
 
-    Download(DownloadBean downloadBean) {
-        this.downloadBean = downloadBean;
+    Download(ConfigBean configBean) {
+        this.configBean = configBean;
 
-        iDownLoadCall = downloadBean.getDownLoadCall();
-        fromUrl = downloadBean.getFromUrl();
-        cacheFile = new File(downloadBean.getTempFile());
-        positionFile = new File(downloadBean.getCacheFile());// 创建缓存文件，用于记录下载位置
-        isSingleThread = downloadBean.isSingleThread();
+        iDownLoadCall = configBean.getDownLoadCall();
+        fromUrl = configBean.getFromUrl();
+        cacheFile = new File(configBean.getTempFile());
+        positionFile = new File(configBean.getCacheFile());// 创建缓存文件，用于记录下载位置
+        isSingleThread = configBean.isSingleThread();
 
         isUserCancel = false;
     }
@@ -59,7 +59,7 @@ class Download {
             iDownload = new MultiDownload();
         }
 
-        iDownload.setInfo(downloadBean, urlInfoBean);
+        iDownload.setInfo(configBean, infoBean);
 
         // 第三步 判断磁盘容量
         iDownload.prepareSave();
@@ -70,7 +70,7 @@ class Download {
         // 第五步 如果是第一次下载，则初始化下载的数据
         iDownload.prepareFirstInit();
 
-        Log.v("下载：" + fromUrl + " 初始化成功:" + urlInfoBean.getFormatStatusString());
+        Log.v("下载：" + fromUrl + " 初始化成功:" + infoBean.getFormatStatusString());
 
         // 校验用户退出响应
         if (isUserCancel) {
@@ -79,7 +79,7 @@ class Download {
             return;
         }
 
-        if (iDownLoadCall != null) iDownLoadCall.onStart(urlInfoBean);
+        if (iDownLoadCall != null) iDownLoadCall.onStart(infoBean);
 
         iDownload.startDownload();
     }
@@ -97,14 +97,14 @@ class Download {
     }
 
     private void prepareUrl() throws Exception {
-        urlInfoBean = Utils.getFileSize(fromUrl);
-        if (urlInfoBean == null) {
+        infoBean = Utils.getFileSize(fromUrl);
+        if (infoBean == null) {
             throw new Exception("获取服务器信息失败！");
         }
-        if (urlInfoBean.isChunked()) {
+        if (infoBean.isChunked()) {
             Log.v("下载资源大小未知！");
         }
-        if (!urlInfoBean.isSupportRanges()) {
+        if (!infoBean.isSupportRanges()) {
             Log.v("下载资源不支持断点下载！");
         }
     }
