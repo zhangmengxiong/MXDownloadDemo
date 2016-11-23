@@ -4,17 +4,26 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.mx.download.model.DownloadBean;
-import com.mx.download.model.DownloadStatus;
+import com.mx.download.model.UrlInfoBean;
 import com.mx.download.utils.IDownLoadCall;
 
+/**
+ * 下载器入口类
+ */
 public class MXDownload {
     private final String TAG = MXDownload.class.getSimpleName();
-    public static boolean DEBUG = true;
-    private DownloadBean downloadBean;
-    private IDownLoadCall iDownLoadCall;
-    private Download download;
-    private Handler mHandler;
+    public static boolean DEBUG = false;
 
+    private DownloadBean downloadBean; // 下载信息对象
+    private IDownLoadCall iDownLoadCall; // 回调对象
+    private Download download; // 下载方法
+    private Handler mHandler; // 主线程回调句柄
+
+    /**
+     * 每次都是新的变量~
+     *
+     * @return
+     */
     public static MXDownload getInstance() {
         return new MXDownload();
     }
@@ -23,16 +32,33 @@ public class MXDownload {
         downloadBean = new DownloadBean();
     }
 
+    /**
+     * 设置下载地址
+     *
+     * @param fromUrl
+     * @return
+     */
     public MXDownload download(String fromUrl) {
         downloadBean.setFromUrl(fromUrl);
         return this;
     }
 
+    /**
+     * 保存路径，需是全路径！
+     *
+     * @param toPath
+     * @return
+     */
     public MXDownload save(String toPath) {
         downloadBean.setToPath(toPath);
         return this;
     }
 
+    /**
+     * 单线程模式
+     *
+     * @return
+     */
     public MXDownload singleThread() {
         downloadBean.setMaxThreads(1);
         return this;
@@ -81,7 +107,7 @@ public class MXDownload {
                 }
 
                 @Override
-                public void onStart(final DownloadStatus status) {
+                public void onStart(final UrlInfoBean status) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -101,7 +127,7 @@ public class MXDownload {
                 }
 
                 @Override
-                public void onProgressUpdate(final DownloadStatus status) {
+                public void onProgressUpdate(final UrlInfoBean status) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -111,11 +137,11 @@ public class MXDownload {
                 }
 
                 @Override
-                public void onFinish(final String url) {
+                public void onSuccess(final String url) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            iDownLoadCall.onFinish(url);
+                            iDownLoadCall.onSuccess(url);
                         }
                     });
                 }
@@ -134,16 +160,33 @@ public class MXDownload {
         return this;
     }
 
+    /**
+     * 设置多线程数量
+     *
+     * @param max
+     * @return
+     */
     public MXDownload maxThread(int max) {
         downloadBean.setMaxThreads(max);
         return this;
     }
 
+    /**
+     * 设置报错时重试次数！
+     *
+     * @param max
+     * @return
+     */
     public MXDownload maxRetryCount(int max) {
         downloadBean.setMaxRetryCount(max);
         return this;
     }
 
+    /**
+     * 开始启动下载！
+     *
+     * @return
+     */
     public MXDownload start() {
         if (download != null) return this;
         downloadBean.getExecutorService().execute(new Runnable() {
@@ -161,6 +204,8 @@ public class MXDownload {
                     } finally {
                         cancel();
                         download = null;
+                        if (downloadBean.getDownLoadCall() != null)
+                            downloadBean.getDownLoadCall().onFinish();
                         downloadBean.getExecutorService().shutdownNow();
                     }
                 }
@@ -169,11 +214,23 @@ public class MXDownload {
         return this;
     }
 
+    /**
+     * 取消下载
+     */
     public void cancel() {
         try {
             if (download != null)
                 download.cancel();
         } catch (Exception ignored) {
         }
+    }
+
+    /**
+     * 设置调试模式
+     *
+     * @param d
+     */
+    public static void setDebug(boolean d) {
+        MXDownload.DEBUG = d;
     }
 }

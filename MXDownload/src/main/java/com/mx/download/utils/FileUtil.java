@@ -3,7 +3,7 @@ package com.mx.download.utils;
 import com.mx.download.model.ChipSaveMod;
 import com.mx.download.model.DownChipBean;
 import com.mx.download.model.DownType;
-import com.mx.download.model.DownloadStatus;
+import com.mx.download.model.UrlInfoBean;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,15 +20,15 @@ public class FileUtil {
     /**
      * 将文件分段，返回分段的数组
      *
-     * @param fileLength
+     * @param maxSize
      * @return
      */
-    public static DownChipBean[] getDownloadPosition(long fileLength) {
-        if (fileLength <= 0) {
+    public static DownChipBean[] getDownloadPosition(long maxSize) {
+        if (maxSize <= 0) {
             return null;
         }
 
-        int len = getFragmentSize(fileLength);
+        int len = getFragmentSize(maxSize);
 
         DownChipBean[] result = new DownChipBean[len];
 
@@ -36,13 +36,13 @@ public class FileUtil {
             result[i] = new DownChipBean();
             result[i].index = i;
 
-            long size = i * (fileLength / len);
+            long size = i * (maxSize / len);
             result[i].start = size;
             // 设置最后一个结束点的位置
             if (i == len - 1) {
-                result[i].end = fileLength;
+                result[i].end = maxSize;
             } else {
-                size = (i + 1) * (fileLength / len);
+                size = (i + 1) * (maxSize / len);
                 result[i].end = size;
             }
         }
@@ -56,7 +56,7 @@ public class FileUtil {
      * @return
      */
     private static int getFragmentSize(long l) {
-        int mb = (int) (l / ((float) 1024 * 1024));
+        int mb = (int) (l / (1024 * 1024));
         int size = 1;
         if (mb > 10) {
             size = (mb / 20) + 1;
@@ -113,7 +113,7 @@ public class FileUtil {
      * @param been
      * @param status
      */
-    public static void writeMulityPosition(File positionFile, DownChipBean[] been, DownloadStatus status) {
+    public static void writeMulityPosition(File positionFile, DownChipBean[] been, UrlInfoBean status) {
         try {
             ChipSaveMod saveMod = new ChipSaveMod();
             saveMod.downChipBeen = been;
@@ -137,11 +137,11 @@ public class FileUtil {
      * @param chipBean
      * @param status
      */
-    public static void writeSinglePosition(File positionFile, DownChipBean chipBean, DownloadStatus status) {
+    public static void writeSinglePosition(File positionFile, DownChipBean chipBean, UrlInfoBean status) {
         try {
             ChipSaveMod saveMod = new ChipSaveMod();
             saveMod.downChipBeen = new DownChipBean[]{chipBean};
-            saveMod.type = DownType.TYPE_MULITY;
+            saveMod.type = DownType.TYPE_SINGLE;
             saveMod.LastModify = status.getLastModify();
             saveMod.fileSize = status.getTotalSize();
             saveMod.completeSize = status.getDownloadSize();

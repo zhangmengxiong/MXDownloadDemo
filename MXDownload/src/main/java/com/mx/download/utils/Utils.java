@@ -1,23 +1,16 @@
 package com.mx.download.utils;
 
-import com.mx.download.model.DownloadStatus;
+import com.mx.download.model.UrlInfoBean;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class Utils {
     public static String formatSize(long size) {
         String hrSize;
 
-        double b = size;
         double k = size / 1024.0;
         double m = ((size / 1024.0) / 1024.0);
         double g = (((size / 1024.0) / 1024.0) / 1024.0);
@@ -34,36 +27,9 @@ public class Utils {
         } else if (k > 1) {
             hrSize = dec.format(k).concat(" KB");
         } else {
-            hrSize = dec.format(b).concat(" Bytes");
+            hrSize = dec.format(size).concat(" Bytes");
         }
         return hrSize;
-    }
-
-    public static String formatSpeed(long speed) {
-        return formatSpeed(speed) + "/s";
-    }
-
-    public static String longToGMT(long lastModify) {
-        Date d = new Date(lastModify);
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z", Locale.US);
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return sdf.format(d);
-    }
-
-    public static long GMTToLong(String GMT) throws ParseException {
-        if (GMT == null || "".equals(GMT)) {
-            return new Date().getTime();
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z", Locale.US);
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Date date = sdf.parse(GMT);
-        return date.getTime();
-    }
-
-    public static void close(Closeable closeable) throws IOException {
-        if (closeable != null) {
-            closeable.close();
-        }
     }
 
     public static void closeSilent(Closeable closeable) {
@@ -100,14 +66,14 @@ public class Utils {
      * @param fromUrl
      * @return
      */
-    public static DownloadStatus getFileSize(String fromUrl) {
-        DownloadStatus status = null;
+    public static UrlInfoBean getFileSize(String fromUrl) {
+        UrlInfoBean status = null;
         try {
             URL url = new URL(fromUrl);// 获取资源路径
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {
-                status = new DownloadStatus();
+                status = new UrlInfoBean();
                 status.setLastModify(getLastModify(conn));
 
                 long maxSize = getContentLength(conn);

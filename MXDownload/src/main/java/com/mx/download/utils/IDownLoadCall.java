@@ -1,6 +1,6 @@
 package com.mx.download.utils;
 
-import com.mx.download.model.DownloadStatus;
+import com.mx.download.model.UrlInfoBean;
 
 public abstract class IDownLoadCall {
 
@@ -17,7 +17,15 @@ public abstract class IDownLoadCall {
      *
      * @param status 下载的信息
      */
-    public void onStart(DownloadStatus status) {
+    public void onStart(UrlInfoBean status) {
+    }
+
+    /**
+     * 下载进度更新
+     *
+     * @param status
+     */
+    public void onProgressUpdate(UrlInfoBean status) {
     }
 
     /**
@@ -29,19 +37,17 @@ public abstract class IDownLoadCall {
     }
 
     /**
-     * 下载进度更新
+     * 下载成功
      *
-     * @param status
+     * @param url
      */
-    public void onProgressUpdate(DownloadStatus status) {
+    public void onSuccess(String url) {
     }
 
     /**
      * 下载进程结束
-     *
-     * @param url
      */
-    public void onFinish(String url) {
+    public void onFinish() {
     }
 
     /**

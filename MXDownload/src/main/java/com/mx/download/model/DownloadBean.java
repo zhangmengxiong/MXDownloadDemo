@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 import static android.text.TextUtils.concat;
 
 /**
+ * 下载信息保存对象
+ * <p>
  * 创建人： zhangmengxiong
  * 创建时间： 2016-11-18.
  * 联系方式: zmx_final@163.com

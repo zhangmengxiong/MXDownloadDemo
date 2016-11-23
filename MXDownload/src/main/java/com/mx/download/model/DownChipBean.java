@@ -1,7 +1,5 @@
 package com.mx.download.model;
 
-import android.text.TextUtils;
-
 import java.io.Serializable;
 
 /**
@@ -16,11 +14,6 @@ public class DownChipBean implements Serializable {
     public int index;
 
     public DownChipBean() {
-    }
-
-    public DownChipBean(long s, long e) {
-        start = s;
-        end = e;
     }
 
     public boolean isComplete() {
@@ -41,29 +34,11 @@ public class DownChipBean implements Serializable {
         return ("[线程 -" + index + "- 下载 " + p + "%]");
     }
 
-    public String toSaveString() {
-        return (start + "##" + end + "##" + completeSize + "##" + index);
-    }
-
-    public static DownChipBean fromString(String s) {
-        if (TextUtils.isEmpty(s)) return null;
-        try {
-            DownChipBean bean = new DownChipBean();
-            String[] strings = s.split("##");
-            if (strings.length != 4) return null;
-
-            bean.start = Long.valueOf(strings[0]);
-            bean.end = Long.valueOf(strings[1]);
-            bean.completeSize = Long.valueOf(strings[2]);
-            bean.index = Integer.valueOf(strings[3]);
-
-            return bean;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
+    /**
+     * 新增下载完成的长度
+     *
+     * @param length
+     */
     public void addDownloadSize(int length) {
         completeSize = completeSize + length;
         if (completeSize > end - start) completeSize = end - start;

@@ -4,19 +4,21 @@ import static com.mx.download.utils.Utils.formatSize;
 
 
 /**
- * User: Season(ssseasonnn@gmail.com)
+ * 保存从下载地址读取出来的信息的对象
+ * <p>
+ * User: zhangmengxiong
  * Date: 2016-07-15
  * Time: 15:48
  * 表示下载状态, 如果isChunked为true, totalSize 可能不存在
  */
-public class DownloadStatus {
+public class UrlInfoBean {
     public boolean isChunked = false; // 未知大小的文件
     private String lastModify = "";
     private long totalSize = 0L;
     private long downloadSize = 0L;
     public boolean isAcceptRanges = true;
 
-    public DownloadStatus() {
+    public UrlInfoBean() {
     }
 
     public long getTotalSize() {
@@ -86,9 +88,5 @@ public class DownloadStatus {
             result = downloadSize * 1.0 / totalSize;
         }
         return result;
-    }
-
-    public boolean isComplete() {
-        return totalSize == downloadSize;
     }
 }

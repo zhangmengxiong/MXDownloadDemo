@@ -1,47 +1,50 @@
 //下载线程
 package com.mx.download.factory.run;
 
-import com.mx.download.MXDownload;
 import com.mx.download.model.DownChipBean;
+import com.mx.download.utils.Log;
 
 import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MulityDownloadRun implements Runnable {
+/**
+ * 多线程下载的下载器
+ */
+public class MultiDownloadRun implements Runnable {
     private static final int TIME_OUT = 15 * 1000;// 超时
-    private String sourceUrl;// 资源路径
-    private String savePath;
-    private String fileName;
-    private DownChipBean chipBeen;// 下载开始位置
+    private String sourceUrl;   // 下载资源路径
+    private String savePath;    // 保存路径
+    private String saveFile;    // 保存的文件
+    private DownChipBean chipBeen;// 下载位置变量
     private boolean isStop = false;// 该线程外部停止标记
     private boolean errorTag = false;// 该线程外部停止标记
 
-    public MulityDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen) {
+    public MultiDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen) {
         this.sourceUrl = fromUrl;
         this.savePath = savePath;
         this.chipBeen = chipBeen;
         this.isStop = false;
         this.errorTag = false;
 
-        fileName = new File(savePath).getName();
+        saveFile = new File(savePath).getName();
     }
 
     @Override
     public void run() {
+        // 执行前第一次判断是否下载完，如果下载完了 就直接返回
         if (chipBeen.isComplete()) {
             isStop = false;
             errorTag = false;
             return;
         }
+        // 如果用户取消了  直接返回
         if (isStop) {
-            if (MXDownload.DEBUG)
-                System.out.println(fileName + " -- " + chipBeen + "被终止");
+            Log.v(saveFile + " -- " + chipBeen + "被终止");
             return;
         }
-        if (MXDownload.DEBUG)
-            System.out.println(fileName + " -- " + chipBeen + "开始执行");
+        Log.v(saveFile + " -- " + chipBeen + "开始执行");
 
         SaveFile saveFile = null;
         try {
@@ -58,20 +61,18 @@ public class MulityDownloadRun implements Runnable {
             int length;
             while (((length = is.read(buff)) > 0)) {
                 saveFile.write(buff, length); // 写入文件内容
-                chipBeen.addDownloadSize(length);
+                chipBeen.addDownloadSize(length); // 新增下载完成的长度
             }
         } catch (Exception e) {
             e.printStackTrace();
-            if (MXDownload.DEBUG)
-                System.out.println(fileName + " -- " + chipBeen + "出现错误！即将退出线程。");
+            Log.v(this.saveFile + " -- " + chipBeen + "出现错误！即将退出线程。");
             errorTag = true;
         } finally {
             if (saveFile != null) {
                 saveFile.close();// 关闭打开的文件
             }
         }
-        if (MXDownload.DEBUG)
-            System.out.println(fileName + " -- " + "执行结束:" + chipBeen);
+        Log.v(this.saveFile + " -- " + "执行结束:" + chipBeen);
     }
 
     public boolean isDownloadOver()// 返回该线程下载是否完成的标志

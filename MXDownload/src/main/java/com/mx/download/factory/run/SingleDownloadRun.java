@@ -1,7 +1,7 @@
 package com.mx.download.factory.run;
 
-import com.mx.download.MXDownload;
 import com.mx.download.model.DownChipBean;
+import com.mx.download.utils.Log;
 
 import java.io.File;
 import java.io.InputStream;
@@ -13,7 +13,6 @@ import java.net.URL;
  * 创建时间： 2016-11-22.
  * 联系方式: zmx_final@163.com
  */
-
 public class SingleDownloadRun implements Runnable {
     private static final int TIME_OUT = 15 * 1000;// 超时
     private String sourceUrl;// 资源路径
@@ -41,12 +40,10 @@ public class SingleDownloadRun implements Runnable {
             return;
         }
         if (isStop) {
-            if (MXDownload.DEBUG)
-                System.out.println(fileName + " -- " + chipBeen + "被终止");
+            Log.v(fileName + " -- " + chipBeen + "被终止");
             return;
         }
-        if (MXDownload.DEBUG)
-            System.out.println(fileName + " -- " + chipBeen + "开始执行");
+        Log.v(fileName + " -- " + chipBeen + "开始执行");
 
         SaveFile saveFile = null;
         try {
@@ -67,16 +64,15 @@ public class SingleDownloadRun implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            if (MXDownload.DEBUG)
-                System.out.println(fileName + " -- " + chipBeen + "出现错误！即将退出线程。");
+            Log.v(fileName + " -- " + chipBeen + "出现错误！即将退出线程。");
             errorTag = true;
         } finally {
             if (saveFile != null) {
                 saveFile.close();// 关闭打开的文件
             }
         }
-        if (MXDownload.DEBUG)
-            System.out.println(fileName + " -- " + "执行结束:" + chipBeen);
+
+        Log.v(fileName + " -- " + "执行结束:" + chipBeen);
     }
 
     public boolean isDownloadOver()// 返回该线程下载是否完成的标志

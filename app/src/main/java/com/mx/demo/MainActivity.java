@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mx.download.MXDownload;
-import com.mx.download.model.DownloadStatus;
+import com.mx.download.model.UrlInfoBean;
 import com.mx.download.utils.IDownLoadCall;
 
 import java.io.File;
@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
         maxSize = (TextView) findViewById(R.id.maxSize);
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
+        MXDownload.setDebug(true);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,29 +45,35 @@ public class MainActivity extends Activity {
                 if (mxDownload == null) {
                     new File("/sdcard/weixin.apk").delete();
                     mxDownload = MXDownload.getInstance()
-                            .download("http://a6.pc6.com/kha5/laojiumen.360.apk")
+//                            .download("http://a6.pc6.com/kha5/laojiumen.360.apk") // 200M
+//                            .download("http://www.baidu.com")
+                            .download("https://downpack.baidu.com/appsearch_AndroidPhone_1012271b.apk") // 6M
+//                            .download("http://bos.pgzs.com/sjapp91/pcsuite/plugin/91assistant_pc_008.exe")
                             .save("/sdcard/weixin.apk")
-                            .maxThread(6)
+                            .maxThread(3)
                             .maxRetryCount(3)
-                            .singleThread()
+//                            .singleThread()
                             .addMainThreadCall(new IDownLoadCall() {
                                 @Override
                                 public void onPrepare(String url) {
+                                    Log.v("proc", "onPrepare");
                                     progressBar.setProgress(0);
                                     progressBar.setMax(100);
                                 }
 
                                 @Override
-                                public void onStart(DownloadStatus status) {
+                                public void onStart(UrlInfoBean status) {
+                                    Log.v("proc", "onStart");
                                     progressBar.setProgress((int) (status.getPercent() * 100));
                                 }
 
                                 @Override
                                 public void onError(Throwable th) {
+                                    Log.v("proc", "onError");
                                 }
 
                                 @Override
-                                public void onProgressUpdate(DownloadStatus status) {
+                                public void onProgressUpdate(UrlInfoBean status) {
                                     Log.v("proc", status.getFormatStatusString());
                                     progressBar.setProgress((int) (status.getPercent() * 100));
                                     curSize.setText(status.getFormatDownloadSize());
@@ -74,13 +81,18 @@ public class MainActivity extends Activity {
                                 }
 
                                 @Override
-                                public void onFinish(String url) {
+                                public void onSuccess(String url) {
+                                    Log.v("proc", "onSuccess");
+                                }
+
+                                @Override
+                                public void onFinish() {
 
                                 }
 
                                 @Override
                                 public void onCancel(String url) {
-
+                                    Log.v("proc", "onCancel");
                                 }
                             })
                             .start();

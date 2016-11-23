@@ -9,6 +9,4 @@ package com.mx.download.model;
 public enum DownType {
     TYPE_SINGLE,
     TYPE_MULITY,
-    TYPE_CHUNKED,
-
 }

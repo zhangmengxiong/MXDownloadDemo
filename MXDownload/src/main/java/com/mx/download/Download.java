@@ -2,11 +2,13 @@
 package com.mx.download;
 
 import com.mx.download.factory.IDownload;
-import com.mx.download.factory.MultyDownload;
+import com.mx.download.factory.MultiDownload;
 import com.mx.download.factory.SingleDownload;
 import com.mx.download.model.DownloadBean;
-import com.mx.download.model.DownloadStatus;
+import com.mx.download.model.UrlInfoBean;
 import com.mx.download.utils.FileUtil;
+import com.mx.download.utils.IDownLoadCall;
+import com.mx.download.utils.Log;
 import com.mx.download.utils.Utils;
 
 import java.io.File;
@@ -17,7 +19,7 @@ import java.io.File;
  * @author zmx
  */
 class Download {
-
+    private IDownLoadCall iDownLoadCall;
     private DownloadBean downloadBean;
     private IDownload iDownload;
     private String fromUrl;
@@ -26,11 +28,13 @@ class Download {
 
     private volatile boolean isUserCancel = false;
     private File cacheFile;
-    private DownloadStatus downloadStatus;
+    private UrlInfoBean urlInfoBean;
 
     Download(DownloadBean downloadBean) {
         this.downloadBean = downloadBean;
-        this.fromUrl = downloadBean.getFromUrl();
+
+        iDownLoadCall = downloadBean.getDownLoadCall();
+        fromUrl = downloadBean.getFromUrl();
         cacheFile = new File(downloadBean.getTempFile());
         positionFile = new File(downloadBean.getCacheFile());// 创建缓存文件，用于记录下载位置
         isSingleThread = downloadBean.isSingleThread();
@@ -39,6 +43,8 @@ class Download {
     }
 
     void startRun() throws Exception {
+        if (iDownLoadCall != null) iDownLoadCall.onPrepare(fromUrl);
+
         // 第一步 创建下载的文件
         prepareFile();
 
@@ -50,10 +56,10 @@ class Download {
             iDownload = new SingleDownload();
         } else {
             // 默认多线程下载
-            iDownload = new MultyDownload();
+            iDownload = new MultiDownload();
         }
 
-        iDownload.setInfo(downloadBean, downloadStatus);
+        iDownload.setInfo(downloadBean, urlInfoBean);
 
         // 第三步 判断磁盘容量
         iDownload.prepareSave();
@@ -64,11 +70,16 @@ class Download {
         // 第五步 如果是第一次下载，则初始化下载的数据
         iDownload.prepareFirstInit();
 
-        if (MXDownload.DEBUG)
-            System.out.println("下载：" + fromUrl + " 初始化成功:" + downloadStatus.getFormatStatusString());
+        Log.v("下载：" + fromUrl + " 初始化成功:" + urlInfoBean.getFormatStatusString());
 
         // 校验用户退出响应
-        if (checkCancel()) return;
+        if (isUserCancel) {
+            if (iDownLoadCall != null)
+                iDownLoadCall.onCancel(fromUrl);
+            return;
+        }
+
+        if (iDownLoadCall != null) iDownLoadCall.onStart(urlInfoBean);
 
         iDownload.startDownload();
     }
@@ -86,21 +97,16 @@ class Download {
     }
 
     private void prepareUrl() throws Exception {
-        downloadStatus = Utils.getFileSize(fromUrl);
-        if (downloadStatus == null) {
+        urlInfoBean = Utils.getFileSize(fromUrl);
+        if (urlInfoBean == null) {
             throw new Exception("获取服务器信息失败！");
         }
-        if (downloadStatus.isChunked()) {
-            System.out.println("下载资源大小未知！");
+        if (urlInfoBean.isChunked()) {
+            Log.v("下载资源大小未知！");
         }
-        if (!downloadStatus.isSupportRanges()) {
-            System.out.println("下载资源不支持断点下载！");
+        if (!urlInfoBean.isSupportRanges()) {
+            Log.v("下载资源不支持断点下载！");
         }
-        System.out.println("下载大小:" + downloadStatus.getFormatTotalSize());
-    }
-
-    private boolean checkCancel() {
-        return isUserCancel;
     }
 
     void cancel() {
