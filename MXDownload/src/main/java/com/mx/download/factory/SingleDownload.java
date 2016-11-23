@@ -1,10 +1,11 @@
 package com.mx.download.factory;
 
 import com.mx.download.factory.run.SingleDownloadRun;
-import com.mx.download.model.SaveBean;
-import com.mx.download.model.DownChipBean;
 import com.mx.download.model.ConfigBean;
+import com.mx.download.model.DownChipBean;
+import com.mx.download.model.DownType;
 import com.mx.download.model.InfoBean;
+import com.mx.download.model.SaveBean;
 import com.mx.download.utils.FileUtil;
 import com.mx.download.utils.IDownLoadCall;
 import com.mx.download.utils.Log;
@@ -80,6 +81,12 @@ public class SingleDownload implements IDownload {
                     Log.v("网络上文件的修改时间和本地断点记录不一样，重置下载：" + desFile.getName());
                     reset = true;
                 }
+
+                if (saveMod.type != DownType.TYPE_SINGLE) {
+                    Log.v("下载断点类型和记录不一致，重置下载：" + desFile.getName());
+                    reset = true;
+                }
+
                 if (reset) {
                     infoBean.setDownloadSize(0);
                     FileUtil.resetFile(cacheFile);

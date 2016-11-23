@@ -205,6 +205,12 @@ public class MXDownload {
      * @return
      */
     public MXDownload start() {
+        if (configBean.getFromUrl() == null)
+            throw new NullPointerException("下载地址为空，请调用方法：download() 设置下载地址。");
+
+        if (configBean.getToPath() == null)
+            throw new NullPointerException("保存地址为空，请调用方法：save() 设置下载地址。");
+
         if (download != null) return this;
         configBean.getExecutorService().execute(new Runnable() {
             @Override

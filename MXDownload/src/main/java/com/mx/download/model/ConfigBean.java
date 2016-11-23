@@ -21,7 +21,7 @@ public class ConfigBean {
     private static final String TMP_SUFFIX = ".tmp";  //temp file
     private static final String CACHE_SUFFIX = ".cache";  //last modify file
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(3);
+    private ExecutorService executorService = null;
     private int MAX_THREADS = 3;
     private int MAX_RETRY_COUNT = -1;
 
@@ -31,7 +31,6 @@ public class ConfigBean {
 
     private String tempFile;
     private String cacheFile;
-
 
     public ConfigBean() {
     }
@@ -78,7 +77,7 @@ public class ConfigBean {
     }
 
     public int getMaxRetryCount() {
-        return (MAX_RETRY_COUNT < 0 ? MAX_THREADS * 3 : MAX_RETRY_COUNT);
+        return (MAX_RETRY_COUNT < 0 ? MAX_THREADS * 2 : MAX_RETRY_COUNT);
     }
 
     public void addCall(IDownLoadCall iDownLoadCall) {
@@ -90,8 +89,9 @@ public class ConfigBean {
     }
 
     public synchronized ExecutorService getExecutorService() {
-        if (executorService == null || executorService.isShutdown())
+        if (executorService == null || executorService.isShutdown()) {
             executorService = Executors.newFixedThreadPool(MAX_THREADS + 1);
+        }
         return executorService;
     }
 }
