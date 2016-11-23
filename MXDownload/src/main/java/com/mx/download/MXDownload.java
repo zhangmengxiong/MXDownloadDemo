@@ -7,6 +7,8 @@ import com.mx.download.model.ConfigBean;
 import com.mx.download.model.InfoBean;
 import com.mx.download.utils.IDownLoadCall;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * 下载器入口类
  */
@@ -18,6 +20,7 @@ public class MXDownload {
     private IDownLoadCall iDownLoadCall; // 回调对象
     private Download download; // 下载方法
     private Handler mHandler; // 主线程回调句柄
+    private AtomicBoolean isInDownload = new AtomicBoolean(false);
 
     /**
      * 每次都是新的变量~
@@ -204,33 +207,32 @@ public class MXDownload {
      *
      * @return
      */
-    public MXDownload start() {
+    public synchronized MXDownload start() {
         if (configBean.getFromUrl() == null)
             throw new NullPointerException("下载地址为空，请调用方法：download() 设置下载地址。");
 
         if (configBean.getToPath() == null)
             throw new NullPointerException("保存地址为空，请调用方法：save() 设置下载地址。");
 
-        if (download != null) return this;
+        if (isRunning()) return this;
+        isInDownload.set(true);
         configBean.getExecutorService().execute(new Runnable() {
             @Override
             public void run() {
-                synchronized (TAG) {
-                    if (download != null) return;
-                    try {
-                        download = new Download(configBean);
-                        download.startRun();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        if (configBean.getDownLoadCall() != null)
-                            configBean.getDownLoadCall().onError(e);
-                    } finally {
-                        cancel();
-                        download = null;
-                        if (configBean.getDownLoadCall() != null)
-                            configBean.getDownLoadCall().onFinish();
-                        configBean.getExecutorService().shutdownNow();
-                    }
+                try {
+                    download = new Download(configBean);
+                    download.startRun();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    if (configBean.getDownLoadCall() != null)
+                        configBean.getDownLoadCall().onError(e);
+                } finally {
+                    cancel();
+                    if (configBean.getDownLoadCall() != null)
+                        configBean.getDownLoadCall().onFinish();
+
+                    isInDownload.set(false);
+                    configBean.getExecutorService().shutdownNow();
                 }
             }
         });
@@ -246,6 +248,10 @@ public class MXDownload {
                 download.cancel();
         } catch (Exception ignored) {
         }
+    }
+
+    public boolean isRunning() {
+        return isInDownload.get();
     }
 
     /**

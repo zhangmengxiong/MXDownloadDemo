@@ -46,25 +46,29 @@ public class DownAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        final ItemBean bean = getItem(i);
-        ViewHolder o = null;
+        ItemBean bean = getItem(i);
+        ViewHolder viewHolder = null;
         if (view == null) {
-            o = new ViewHolder();
+            viewHolder = new ViewHolder();
             view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
-            o.name = (TextView) view.findViewById(R.id.name);
-            o.info = (TextView) view.findViewById(R.id.info);
-            o.progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-            o.start = (Button) view.findViewById(R.id.start);
-            o.stop = (Button) view.findViewById(R.id.stop);
-            view.setTag(o);
+            viewHolder.name = (TextView) view.findViewById(R.id.name);
+            viewHolder.info = (TextView) view.findViewById(R.id.info);
+            viewHolder.progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+            viewHolder.start = (Button) view.findViewById(R.id.start);
+            viewHolder.stop = (Button) view.findViewById(R.id.stop);
+            view.setTag(viewHolder);
         } else {
-            o = (ViewHolder) view.getTag();
+            viewHolder = (ViewHolder) view.getTag();
         }
-        final ViewHolder viewHolder = o;
-        o.name.setText(bean.NAME);
-        o.start.setOnClickListener(new View.OnClickListener() {
+        viewHolder.bean = bean;
+        viewHolder.name.setText(bean.NAME);
+        viewHolder.start.setTag(viewHolder);
+
+        viewHolder.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final ViewHolder viewHolder = (ViewHolder) view.getTag();
+                ItemBean bean = viewHolder.bean;
                 if (bean.mxDownload == null) {
                     new File(bean.SAVE).delete();
                     bean.mxDownload = MXDownload.getInstance()
@@ -124,9 +128,11 @@ public class DownAdapter extends BaseAdapter {
             }
         });
 
-        o.stop.setOnClickListener(new View.OnClickListener() {
+        viewHolder.stop.setTag(bean);
+        viewHolder.stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ItemBean bean = (ItemBean) view.getTag();
                 if (bean.mxDownload != null) bean.mxDownload.cancel();
             }
         });
@@ -138,5 +144,6 @@ public class DownAdapter extends BaseAdapter {
         ProgressBar progressBar;
         TextView info, name;
         Button start, stop;
+        ItemBean bean;
     }
 }
