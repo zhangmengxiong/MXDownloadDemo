@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
         MXDownload.setDebug(true);
-
+ 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
