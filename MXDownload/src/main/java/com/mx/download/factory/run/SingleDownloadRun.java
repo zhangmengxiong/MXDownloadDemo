@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 创建人： zhangmengxiong
@@ -20,15 +21,15 @@ public class SingleDownloadRun implements Runnable {
     private String savePath;
     private String fileName;
     private DownChipBean chipBeen;// 下载开始位置
-    private boolean isStop = false;// 该线程外部停止标记
-    private boolean errorTag = false;// 该线程外部停止标记
+    private AtomicBoolean isStop = new AtomicBoolean(false);// 该线程外部停止标记
+    private AtomicBoolean errorTag = new AtomicBoolean(false);// 该线程外部停止标记
 
     public SingleDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen) {
         this.sourceUrl = fromUrl;
         this.savePath = savePath;
         this.chipBeen = chipBeen;
-        this.isStop = false;
-        this.errorTag = false;
+        this.isStop.set(false);
+        this.errorTag.set(false);
 
         fileName = new File(savePath).getName();
     }
@@ -36,11 +37,11 @@ public class SingleDownloadRun implements Runnable {
     @Override
     public void run() {
         if (chipBeen.isComplete()) {
-            isStop = false;
-            errorTag = false;
+            isStop.set(false);
+            errorTag.set(false);
             return;
         }
-        if (isStop) {
+        if (isStop.get()) {
             Log.v(fileName + " -- " + chipBeen + "被终止");
             return;
         }
@@ -65,7 +66,7 @@ public class SingleDownloadRun implements Runnable {
                 byte[] buff = new byte[1024 * 16];// 创建缓冲区
                 int length;
                 while (((length = is.read(buff)) > 0)) {
-                    if (isStop || Thread.interrupted()) break;
+                    if (isStop.get() || Thread.interrupted()) break;
 
                     saveFile.write(buff, length); // 写入文件内容
                     chipBeen.addDownloadSize(length);
@@ -78,7 +79,7 @@ public class SingleDownloadRun implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
             Log.v(fileName + " -- " + chipBeen + "出现错误！即将退出线程。");
-            errorTag = true;
+            errorTag.set(true);
         } finally {
             if (saveFile != null) {
                 saveFile.close();// 关闭打开的文件
@@ -97,10 +98,10 @@ public class SingleDownloadRun implements Runnable {
     }
 
     public void stop() {
-        this.isStop = true;
+        isStop.set(true);
     }
 
     public boolean isInError() {
-        return errorTag;
+        return errorTag.get();
     }
 }

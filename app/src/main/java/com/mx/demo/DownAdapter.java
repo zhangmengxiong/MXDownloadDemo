@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mx.download.MXDownload;
 import com.mx.download.model.InfoBean;
@@ -67,6 +68,8 @@ public class DownAdapter extends BaseAdapter {
         viewHolder.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(view.getContext(), "开始！", Toast.LENGTH_SHORT).show();
+
                 final ViewHolder viewHolder = (ViewHolder) view.getTag();
                 ItemBean bean = viewHolder.bean;
                 if (bean.mxDownload == null) {
@@ -132,6 +135,7 @@ public class DownAdapter extends BaseAdapter {
         viewHolder.stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(view.getContext(), "暂停！", Toast.LENGTH_SHORT).show();
                 ItemBean bean = (ItemBean) view.getTag();
                 if (bean.mxDownload != null) bean.mxDownload.cancel();
             }

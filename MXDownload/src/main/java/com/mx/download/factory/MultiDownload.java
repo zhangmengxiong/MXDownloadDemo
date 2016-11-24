@@ -14,6 +14,7 @@ import com.mx.download.utils.Utils;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 多线程下载执行器
@@ -31,7 +32,7 @@ public class MultiDownload implements IDownload {
     private Executor executor; // 多线程池
     private File positionFile;// 记录下载位置文件
     private DownChipBean[] chipBeans;// 结束位置
-    private volatile boolean isUserCancel = false;
+    private AtomicBoolean isUserCancel = new AtomicBoolean(false);
 
     private File cacheFile;
     private File desFile;
@@ -51,7 +52,7 @@ public class MultiDownload implements IDownload {
         desFile = new File(configBean.getToPath());
         positionFile = new File(configBean.getCacheFile());// 创建缓存文件，用于记录下载位置
 
-        isUserCancel = false;
+        isUserCancel.set(false);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class MultiDownload implements IDownload {
         boolean stop = false;
         while (!stop) {
             // 校验用户退出响应
-            if (isUserCancel) break;
+            if (isUserCancel.get()) break;
             stop = true;
 
             long downSize = 0L;
@@ -179,7 +180,7 @@ public class MultiDownload implements IDownload {
             throw new Exception("下载重试次数超过10次，下载失败！");
         }
 
-        if (isUserCancel) {
+        if (isUserCancel.get()) {
             downloadCall.onCancel(fromUrl);
         } else if (isDownFinish) {
             Log.v("下载完成！");
@@ -213,6 +214,6 @@ public class MultiDownload implements IDownload {
 
     @Override
     public void cancel() {
-        isUserCancel = true;
+        isUserCancel.set(true);
     }
 }

@@ -14,6 +14,7 @@ import com.mx.download.utils.Utils;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 创建人： zhangmengxiong
@@ -29,7 +30,7 @@ public class SingleDownload implements IDownload {
     private Executor executor;
     private File positionFile;// 记录下载位置文件
     private DownChipBean chipBean;// 结束位置
-    private volatile boolean isUserCancel = false;
+    private AtomicBoolean isUserCancel = new AtomicBoolean(false);
 
     private File cacheFile;
     private File desFile;
@@ -49,7 +50,7 @@ public class SingleDownload implements IDownload {
         desFile = new File(configBean.getToPath());
         positionFile = new File(configBean.getCacheFile());// 创建缓存文件，用于记录下载位置
 
-        isUserCancel = false;
+        isUserCancel.set(false);
     }
 
     @Override
@@ -132,7 +133,7 @@ public class SingleDownload implements IDownload {
         boolean stop = false;
         while (!stop) {
             // 校验用户退出响应
-            if (isUserCancel) break;
+            if (isUserCancel.get()) break;
             stop = true;
 
             if (downloadThread.isInError()) {// 下载失败 重试
@@ -170,7 +171,7 @@ public class SingleDownload implements IDownload {
             throw new Exception("下载重试次数超过10次，下载失败！");
         }
 
-        if (isUserCancel) {
+        if (isUserCancel.get()) {
             downloadCall.onCancel(fromUrl);
         } else if (chipBean.isComplete()) {
             Log.v("下载完成！");
@@ -199,6 +200,6 @@ public class SingleDownload implements IDownload {
 
     @Override
     public void cancel() {
-        isUserCancel = true;
+        isUserCancel.set(true);
     }
 }
