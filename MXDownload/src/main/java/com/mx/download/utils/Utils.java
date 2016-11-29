@@ -24,10 +24,30 @@ public class Utils {
             hrSize = dec.format(g).concat(" GB");
         } else if (m > 1) {
             hrSize = dec.format(m).concat(" MB");
-        } else if (k > 1) {
-            hrSize = dec.format(k).concat(" KB");
         } else {
-            hrSize = dec.format(size).concat(" Bytes");
+            hrSize = dec.format(k).concat(" KB");
+        }
+        return hrSize;
+    }
+
+    public static String formatSpeed(long size) {
+        String hrSize;
+
+        double k = size / 1024.0;
+        double m = ((size / 1024.0) / 1024.0);
+        double g = (((size / 1024.0) / 1024.0) / 1024.0);
+        double t = ((((size / 1024.0) / 1024.0) / 1024.0) / 1024.0);
+
+        DecimalFormat dec = new DecimalFormat("0.00");
+
+        if (t > 1) {
+            hrSize = dec.format(t).concat(" TB/s");
+        } else if (g > 1) {
+            hrSize = dec.format(g).concat(" GB/s");
+        } else if (m > 1) {
+            hrSize = dec.format(m).concat(" MB/s");
+        } else {
+            hrSize = dec.format(k).concat(" KB/s");
         }
         return hrSize;
     }
@@ -88,5 +108,14 @@ public class Utils {
             status = null;
         }
         return status;
+    }
+
+    /**
+     * 获取当前CPU的时间点
+     *
+     * @return
+     */
+    public static long currentCPUTimeMillis() {
+        return (System.nanoTime() / 1000000000);
     }
 }

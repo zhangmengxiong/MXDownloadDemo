@@ -1,7 +1,7 @@
 package com.mx.download.model;
 
-import static com.mx.download.utils.Utils.formatSize;
 
+import com.mx.download.utils.Utils;
 
 /**
  * 保存从下载地址读取出来的信息的对象
@@ -17,6 +17,10 @@ public class InfoBean {
     private long totalSize = 0L;
     private long downloadSize = 0L;
     public boolean isAcceptRanges = true;
+
+    private long timeTag = 0L;
+    private long sizeTag = 0L;
+    private long speed = 0L;
 
     public InfoBean() {
     }
@@ -34,6 +38,15 @@ public class InfoBean {
     }
 
     public void setDownloadSize(long downloadSize) {
+        long timeDiff = Math.abs(Utils.currentCPUTimeMillis() - timeTag); //单位：秒
+        long sizeDiff = (downloadSize - sizeTag); // Bytes
+
+        if (timeDiff > 0) {
+            speed = sizeDiff / timeDiff;
+            timeTag = Utils.currentCPUTimeMillis();
+            sizeTag = downloadSize;
+        }
+
         this.downloadSize = downloadSize;
     }
 
@@ -51,11 +64,11 @@ public class InfoBean {
      * @return example: 2KB , 10MB
      */
     public String getFormatTotalSize() {
-        return formatSize(totalSize);
+        return Utils.formatSize(totalSize);
     }
 
     public String getFormatDownloadSize() {
-        return formatSize(downloadSize);
+        return Utils.formatSize(downloadSize);
     }
 
     /**
@@ -73,6 +86,22 @@ public class InfoBean {
 
     public boolean isSupportRanges() {
         return isAcceptRanges;
+    }
+
+    public void resetSpeed() {
+        timeTag = 0L;
+        sizeTag = 0L;
+    }
+
+    /**
+     * 获取下载速度
+     * 单位：KB/s
+     *
+     * @return
+     */
+    public String getSpeed() {
+        if (timeTag <= 0 || sizeTag <= 0) speed = 0L;
+        return Utils.formatSpeed(speed);
     }
 
     /**

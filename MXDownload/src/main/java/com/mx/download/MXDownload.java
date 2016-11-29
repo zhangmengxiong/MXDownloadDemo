@@ -85,7 +85,7 @@ public class MXDownload {
      * @param call
      * @return
      */
-    public MXDownload addMainThreadCall(IDownLoadCall call) {
+    public MXDownload addAsyncCall(IDownLoadCall call) {
         this.iDownLoadCall = call;
         if (iDownLoadCall != null) {
             if (mHandler == null) {

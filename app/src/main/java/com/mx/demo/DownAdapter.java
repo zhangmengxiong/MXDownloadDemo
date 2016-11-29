@@ -83,7 +83,7 @@ public class DownAdapter extends BaseAdapter {
                             .maxThread(3)
 //                            .maxRetryCount(3)
 //                            .singleThread()
-                            .addMainThreadCall(new IDownLoadCall() {
+                            .addAsyncCall(new IDownLoadCall() {
                                 @Override
                                 public void onPrepare(String url) {
                                     Log.v("proc", "onPrepare");
@@ -106,7 +106,7 @@ public class DownAdapter extends BaseAdapter {
                                 public void onProgressUpdate(InfoBean status) {
                                     Log.v("proc", status.getFormatStatusString());
                                     viewHolder.progressBar.setProgress((int) (status.getPercent() * 100));
-                                    viewHolder.info.setText(status.getFormatStatusString());
+                                    viewHolder.info.setText(status.getFormatStatusString() + " " + status.getSpeed());
                                 }
 
                                 @Override
