@@ -106,7 +106,7 @@ public class DownAdapter extends BaseAdapter {
                                 public void onProgressUpdate(InfoBean status) {
                                     Log.v("proc", status.getFormatStatusString());
                                     viewHolder.progressBar.setProgress((int) (status.getPercent() * 100));
-                                    viewHolder.info.setText(status.getFormatStatusString() + " " + status.getSpeed());
+                                    viewHolder.info.setText(status.getFormatStatusString() + " " + status.getFormatSpeed());
                                 }
 
                                 @Override

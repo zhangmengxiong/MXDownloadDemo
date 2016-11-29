@@ -192,7 +192,7 @@ public class SingleDownload implements IDownload {
      */
     private synchronized void updatePosition() {
         infoBean.setDownloadSize(chipBean.completeSize);
-        infoBean.resetSpeed();
+        infoBean.cleanSpeed();
         if (downloadCall != null) {
             downloadCall.onProgressUpdate(infoBean);
         }

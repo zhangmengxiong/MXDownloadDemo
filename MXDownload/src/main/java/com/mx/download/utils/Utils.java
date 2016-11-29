@@ -67,8 +67,13 @@ public class Utils {
     }
 
     static long getContentLength(HttpURLConnection connection) {
-        String length = connection.getHeaderField("Content-Length");
-        return Long.parseLong((length == null || length.length() <= 0) ? "-1" : length);
+        long l;
+        try {
+            l = Long.parseLong(connection.getHeaderField("Content-Length"));
+        } catch (Exception ignored) {
+            l = -1;
+        }
+        return l;
     }
 
     static String getLastModify(HttpURLConnection connection) {
@@ -112,6 +117,7 @@ public class Utils {
 
     /**
      * 获取当前CPU的时间点
+     * 单位：秒
      *
      * @return
      */

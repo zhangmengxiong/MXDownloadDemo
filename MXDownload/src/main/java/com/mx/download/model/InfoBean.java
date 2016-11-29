@@ -88,9 +88,10 @@ public class InfoBean {
         return isAcceptRanges;
     }
 
-    public void resetSpeed() {
+    public void cleanSpeed() {
         timeTag = 0L;
         sizeTag = 0L;
+        speed = 0L;
     }
 
     /**
@@ -99,9 +100,20 @@ public class InfoBean {
      *
      * @return
      */
-    public String getSpeed() {
-        if (timeTag <= 0 || sizeTag <= 0) speed = 0L;
-        return Utils.formatSpeed(speed);
+    public String getFormatSpeed() {
+        return Utils.formatSpeed(getSpeed());
+    }
+
+    /**
+     * 返回即时下载速度
+     * 单位：Bytes/s
+     *
+     * @return
+     */
+    public long getSpeed() {
+        if (timeTag <= 0 || sizeTag <= 0 || Math.abs(timeTag - Utils.currentCPUTimeMillis()) > 3)
+            speed = 0L;
+        return speed;
     }
 
     /**
@@ -109,12 +121,12 @@ public class InfoBean {
      *
      * @return example: 5.25%
      */
-    public Double getPercent() {
-        Double result;
+    public float getPercent() {
+        float result;
         if (totalSize == 0L) {
-            result = 0.0;
+            result = 0.0f;
         } else {
-            result = downloadSize * 1.0 / totalSize;
+            result = downloadSize * 1.0f / totalSize;
         }
         return result;
     }
