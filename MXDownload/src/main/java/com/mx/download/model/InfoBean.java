@@ -42,7 +42,10 @@ public class InfoBean {
         long sizeDiff = (downloadSize - sizeTag); // Bytes
 
         if (timeDiff > 0) {
-            speed = sizeDiff / timeDiff;
+            if (timeTag > 0 && sizeTag > 0) {
+                speed = sizeDiff / timeDiff;
+            }
+
             timeTag = Utils.currentCPUTimeMillis();
             sizeTag = downloadSize;
         }
