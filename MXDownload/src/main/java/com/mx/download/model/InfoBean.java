@@ -38,18 +38,6 @@ public class InfoBean {
     }
 
     public void setDownloadSize(long downloadSize) {
-        long timeDiff = Math.abs(Utils.currentCPUTimeMillis() - timeTag); //单位：秒
-        long sizeDiff = (downloadSize - sizeTag); // Bytes
-
-        if (timeDiff > 0) {
-            if (timeTag > 0 && sizeTag > 0) {
-                speed = sizeDiff / timeDiff;
-            }
-
-            timeTag = Utils.currentCPUTimeMillis();
-            sizeTag = downloadSize;
-        }
-
         this.downloadSize = downloadSize;
     }
 
@@ -91,6 +79,26 @@ public class InfoBean {
         return isAcceptRanges;
     }
 
+    /**
+     * 计算网速
+     */
+    public void computeSpeed() {
+        long timeDiff = Math.abs(Utils.currentCPUTimeMillis() - timeTag); //单位：秒
+        long sizeDiff = (downloadSize - sizeTag); // Bytes
+
+        if (timeDiff > 2) {
+            if (timeTag > 0 && sizeTag > 0) {
+                speed = sizeDiff / timeDiff;
+            }
+
+            timeTag = Utils.currentCPUTimeMillis();
+            sizeTag = downloadSize;
+        }
+    }
+
+    /**
+     * 清理网速计算标记
+     */
     public void cleanSpeed() {
         timeTag = 0L;
         sizeTag = 0L;

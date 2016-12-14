@@ -123,6 +123,8 @@ public class SingleDownload implements IDownload {
 
     @Override
     public void startDownload() throws Exception {
+        infoBean.computeSpeed();
+
         SingleDownloadRun downloadThread = new SingleDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean);
         executor.execute(downloadThread);
 
@@ -147,6 +149,7 @@ public class SingleDownload implements IDownload {
             }
             try {
                 infoBean.setDownloadSize(chipBean.completeSize);
+                infoBean.computeSpeed();
                 if (downloadCall != null) {
                     downloadCall.onProgressUpdate(infoBean);
                 }

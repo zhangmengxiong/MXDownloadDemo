@@ -117,6 +117,8 @@ public class MultiDownload implements IDownload {
 
     @Override
     public void startDownload() throws Exception {
+        infoBean.computeSpeed();
+
         MultiDownloadRun[] downloadThread = new MultiDownloadRun[chipBeans.length];
         for (int i = 0; i < chipBeans.length; i++) {
             downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i]);
@@ -149,6 +151,7 @@ public class MultiDownload implements IDownload {
             }
             try {
                 infoBean.setDownloadSize(downSize);
+                infoBean.computeSpeed();
                 if (downloadCall != null) {
                     downloadCall.onProgressUpdate(infoBean);
                 }
