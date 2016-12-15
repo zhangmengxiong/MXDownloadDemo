@@ -192,6 +192,17 @@ public class MXDownload {
     }
 
     /**
+     * 限速下载
+     *
+     * @param speed KB/s
+     * @return
+     */
+    public MXDownload limitSpeed(int speed) {
+        configBean.setLimitSpeed(speed);
+        return this;
+    }
+
+    /**
      * 设置报错时重试次数！
      *
      * @param max

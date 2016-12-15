@@ -38,6 +38,7 @@ public class MultiDownload implements IDownload {
     private File desFile;
     private int errorNo = 0;
     private int retryMax = 3;
+    private volatile SpeedInterceptor speedInterceptor;
     private InfoBean infoBean;
 
     @Override
@@ -48,6 +49,8 @@ public class MultiDownload implements IDownload {
         this.executor = configBean.getExecutorService();
         this.fromUrl = configBean.getFromUrl();
         this.downloadCall = configBean.getDownLoadCall();
+        speedInterceptor = new SpeedInterceptor(configBean.getLimitSpeed());
+
         cacheFile = new File(configBean.getTempFile());
         desFile = new File(configBean.getToPath());
         positionFile = new File(configBean.getCacheFile());// 创建缓存文件，用于记录下载位置
@@ -121,7 +124,7 @@ public class MultiDownload implements IDownload {
 
         MultiDownloadRun[] downloadThread = new MultiDownloadRun[chipBeans.length];
         for (int i = 0; i < chipBeans.length; i++) {
-            downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i]);
+            downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i], speedInterceptor);
             executor.execute(downloadThread[i]);// 启动线程，开始下载
         }
         Log.v("Start Download Source : " + fromUrl);
@@ -139,7 +142,7 @@ public class MultiDownload implements IDownload {
             {
                 if (downloadThread[i].isInError()) {// 下载失败 重试
                     downloadThread[i].stop();
-                    downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i]);
+                    downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i], speedInterceptor);
                     errorNo++;
                     executor.execute(downloadThread[i]);
                 }
@@ -152,6 +155,7 @@ public class MultiDownload implements IDownload {
             try {
                 infoBean.setDownloadSize(downSize);
                 infoBean.computeSpeed();
+                speedInterceptor.setCurrentSpeed((int) (infoBean.getSpeed() / 1024));
                 if (downloadCall != null) {
                     downloadCall.onProgressUpdate(infoBean);
                 }

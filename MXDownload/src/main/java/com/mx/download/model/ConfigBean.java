@@ -31,6 +31,7 @@ public class ConfigBean {
 
     private String tempFile;
     private String cacheFile;
+    private int limitSpeed;
 
     public ConfigBean() {
     }
@@ -93,5 +94,13 @@ public class ConfigBean {
             executorService = Executors.newFixedThreadPool(MAX_THREADS + 1);
         }
         return executorService;
+    }
+
+    public void setLimitSpeed(int limitSpeed) {
+        this.limitSpeed = limitSpeed;
+    }
+
+    public int getLimitSpeed() {
+        return limitSpeed;
     }
 }

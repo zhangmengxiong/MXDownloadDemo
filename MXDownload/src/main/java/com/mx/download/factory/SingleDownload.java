@@ -36,6 +36,7 @@ public class SingleDownload implements IDownload {
     private File desFile;
     private int errorNo = 0;
     private int retryMax = 3;
+    private volatile SpeedInterceptor speedInterceptor;
     private InfoBean infoBean;
 
     @Override
@@ -49,7 +50,7 @@ public class SingleDownload implements IDownload {
         cacheFile = new File(configBean.getTempFile());
         desFile = new File(configBean.getToPath());
         positionFile = new File(configBean.getCacheFile());// 创建缓存文件，用于记录下载位置
-
+        speedInterceptor = new SpeedInterceptor(configBean.getLimitSpeed());
         isUserCancel.set(false);
     }
 
@@ -125,7 +126,7 @@ public class SingleDownload implements IDownload {
     public void startDownload() throws Exception {
         infoBean.computeSpeed();
 
-        SingleDownloadRun downloadThread = new SingleDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean);
+        SingleDownloadRun downloadThread = new SingleDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor);
         executor.execute(downloadThread);
 
         Log.v("Start Download Source : " + fromUrl);
@@ -140,7 +141,7 @@ public class SingleDownload implements IDownload {
 
             if (downloadThread.isInError()) {// 下载失败 重试
                 downloadThread.stop();
-                downloadThread = new SingleDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean);
+                downloadThread = new SingleDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor);
                 errorNo++;
                 executor.execute(downloadThread);
             }
@@ -150,6 +151,7 @@ public class SingleDownload implements IDownload {
             try {
                 infoBean.setDownloadSize(chipBean.completeSize);
                 infoBean.computeSpeed();
+                speedInterceptor.setCurrentSpeed((int) (infoBean.getSpeed() / 1024));
                 if (downloadCall != null) {
                     downloadCall.onProgressUpdate(infoBean);
                 }

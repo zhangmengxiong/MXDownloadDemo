@@ -1,5 +1,6 @@
 package com.mx.download.factory.run;
 
+import com.mx.download.factory.SpeedInterceptor;
 import com.mx.download.model.DownChipBean;
 import com.mx.download.utils.Log;
 import com.mx.download.utils.Utils;
@@ -23,13 +24,15 @@ public class SingleDownloadRun implements Runnable {
     private DownChipBean chipBeen;// 下载开始位置
     private AtomicBoolean isStop = new AtomicBoolean(false);// 该线程外部停止标记
     private AtomicBoolean errorTag = new AtomicBoolean(false);// 该线程外部停止标记
+    private SpeedInterceptor speedInterceptor;
 
-    public SingleDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen) {
+    public SingleDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen, SpeedInterceptor interceptor) {
         this.sourceUrl = fromUrl;
         this.savePath = savePath;
         this.chipBeen = chipBeen;
         this.isStop.set(false);
         this.errorTag.set(false);
+        speedInterceptor = interceptor;
 
         fileName = new File(savePath).getName();
     }
@@ -70,6 +73,7 @@ public class SingleDownloadRun implements Runnable {
 
                     saveFile.write(buff, length); // 写入文件内容
                     chipBeen.addDownloadSize(length);
+                    if (speedInterceptor != null) speedInterceptor.interceptor();
                 }
 
                 Log.v(fileName + " --> " + chipBeen);
