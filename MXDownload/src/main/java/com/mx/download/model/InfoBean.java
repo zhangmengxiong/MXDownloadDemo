@@ -86,10 +86,8 @@ public class InfoBean {
         long timeDiff = Math.abs(Utils.currentCPUTimeMillis() - timeTag); //单位：秒
         long sizeDiff = (downloadSize - sizeTag); // Bytes
 
-        if (timeDiff > 0) {
-            if (timeTag > 0 && sizeTag > 0) {
-                speed = sizeDiff / timeDiff;
-            }
+        if (speed <= 0 || timeDiff >= 2) {
+            speed = (timeDiff > 0) ? (sizeDiff / timeDiff) : 0L;
 
             timeTag = Utils.currentCPUTimeMillis();
             sizeTag = downloadSize;

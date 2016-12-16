@@ -1,9 +1,9 @@
 package com.mx.download.utils;
 
-import com.mx.download.model.SaveBean;
 import com.mx.download.model.DownChipBean;
 import com.mx.download.model.DownType;
 import com.mx.download.model.InfoBean;
+import com.mx.download.model.SaveBean;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,20 +31,22 @@ public class FileUtil {
         int len = getFragmentSize(maxSize);
 
         DownChipBean[] result = new DownChipBean[len];
-
+        long preEnd = 0L;
         for (int i = 0; i < len; i++) {
             result[i] = new DownChipBean();
             result[i].index = i;
 
             long size = i * (maxSize / len);
+            if (preEnd > 0) size = preEnd + 1;
             result[i].start = size;
             // 设置最后一个结束点的位置
             if (i == len - 1) {
-                result[i].end = maxSize;
+                result[i].end = maxSize - 1;
             } else {
                 size = (i + 1) * (maxSize / len);
                 result[i].end = size;
             }
+            preEnd = result[i].end;
         }
         return result;
     }

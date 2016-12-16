@@ -1,25 +1,22 @@
 //写入文件内容
 package com.mx.download.factory.run;
 
+import com.mx.download.utils.Log;
 import com.mx.download.utils.Utils;
 
 import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 
 class SaveFile {
-    private RandomAccessFile save = null;// 保存的文件
-    private FileChannel saveChannel = null;
-    private MappedByteBuffer saveBuffer = null;
+    private RandomAccessFile save;// 保存的文件
     private long maxSize = 0L;
     private long curSize = 0L;
 
     SaveFile(String path, long start, long end) throws Exception {
-        maxSize = end - start;
+        Log.v("SaveFile : " + start + "-" + end);
         save = new RandomAccessFile(path, "rws");
-        saveChannel = save.getChannel();
-        saveBuffer = saveChannel.map(FileChannel.MapMode.READ_WRITE, start, maxSize);
-//        save.seek(start);
+        save.seek(start);
+
+        maxSize = end - start + 1;
         if (end <= 0) maxSize = -1;
     }
 
@@ -33,13 +30,11 @@ class SaveFile {
                 curSize = curSize + length;
             }
         }
-//        save.write(buff, 0, length);
-        saveBuffer.put(buff, 0, length);
+        save.write(buff, 0, length);
     }
 
     void close()// 关闭文件
     {
         Utils.closeSilent(save);
-        Utils.closeSilent(saveChannel);
     }
 }
