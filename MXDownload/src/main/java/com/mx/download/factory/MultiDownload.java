@@ -184,8 +184,7 @@ public class MultiDownload implements IDownload {
         }
 
         if (isError) {
-            Log.v("下载重试次数超过10次，下载失败！");
-            throw new Exception("下载重试次数超过10次，下载失败！");
+            throw new Exception("下载重试次数超过" + retryMax + "次，下载失败！");
         }
 
         if (isUserCancel.get()) {
