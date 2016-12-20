@@ -22,9 +22,11 @@ public class SpeedInterceptor {
      */
     void setCurrentSpeed(int curSpeed) {
         if (maxSpeed <= 0) return;
-        if (Math.abs(maxSpeed - curSpeed) < 10) return;
+        int diff = Math.abs(maxSpeed - curSpeed);
+        if (diff < 5) return;
+        diff = (int) Math.sqrt(diff);
 
-        sleepTime += (curSpeed > maxSpeed) ? 5 : -5;
+        sleepTime += ((curSpeed > maxSpeed) ? diff : -1 * diff);
         if (sleepTime <= 0) {
             sleepTime = 0;
         }

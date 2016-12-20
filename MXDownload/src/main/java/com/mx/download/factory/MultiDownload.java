@@ -155,7 +155,7 @@ public class MultiDownload implements IDownload {
             try {
                 infoBean.setDownloadSize(downSize);
                 infoBean.computeSpeed();
-                speedInterceptor.setCurrentSpeed((int) (infoBean.getSpeed() / 1024));
+                speedInterceptor.setCurrentSpeed((int) (infoBean.getSpeed() / 1024f));
                 if (downloadCall != null) {
                     downloadCall.onProgressUpdate(infoBean);
                 }

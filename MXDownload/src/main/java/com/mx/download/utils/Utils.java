@@ -30,13 +30,13 @@ public class Utils {
         return hrSize;
     }
 
-    public static String formatSpeed(long size) {
+    public static String formatSpeed(float size) {
         String hrSize;
 
         double k = size / 1024.0;
-        double m = ((size / 1024.0) / 1024.0);
-        double g = (((size / 1024.0) / 1024.0) / 1024.0);
-        double t = ((((size / 1024.0) / 1024.0) / 1024.0) / 1024.0);
+        double m = (k / 1024.0);
+        double g = (m / 1024.0);
+        double t = (g / 1024.0);
 
         DecimalFormat dec = new DecimalFormat("0.00");
 
@@ -121,7 +121,7 @@ public class Utils {
      *
      * @return
      */
-    public static long currentCPUTimeMillis() {
-        return (System.nanoTime() / 1000000000);
+    public static float currentCPUTimeMillis() {
+        return (System.nanoTime() / 1000000000f);
     }
 }

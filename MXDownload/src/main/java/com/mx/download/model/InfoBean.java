@@ -18,9 +18,9 @@ public class InfoBean {
     private long downloadSize = 0L;
     public boolean isAcceptRanges = true;
 
-    private long timeTag = 0L;
+    private float timeTag = 0L;
     private long sizeTag = 0L;
-    private long speed = 0L;
+    private float speed = 0L;
 
     public InfoBean() {
     }
@@ -83,12 +83,11 @@ public class InfoBean {
      * 计算网速
      */
     public void computeSpeed() {
-        long timeDiff = Math.abs(Utils.currentCPUTimeMillis() - timeTag); //单位：秒
+        float timeDiff = Math.abs(Utils.currentCPUTimeMillis() - timeTag); //单位：秒
         long sizeDiff = (downloadSize - sizeTag); // Bytes
 
-        if (speed <= 0 || timeDiff >= 2) {
-            speed = (timeDiff > 0) ? (sizeDiff / timeDiff) : 0L;
-
+        if (speed <= 0 || timeDiff > 2) {
+            speed = (timeDiff > 0) ? (sizeDiff / timeDiff) : 0f;
             timeTag = Utils.currentCPUTimeMillis();
             sizeTag = downloadSize;
         }
@@ -98,14 +97,13 @@ public class InfoBean {
      * 清理网速计算标记
      */
     public void cleanSpeed() {
-        timeTag = 0L;
+        timeTag = 0f;
         sizeTag = 0L;
-        speed = 0L;
+        speed = 0f;
     }
 
     /**
      * 获取下载速度
-     * 单位：KB/s
      *
      * @return
      */
@@ -119,9 +117,9 @@ public class InfoBean {
      *
      * @return
      */
-    public long getSpeed() {
-        if (timeTag <= 0 || sizeTag <= 0 || Math.abs(timeTag - Utils.currentCPUTimeMillis()) > 3)
-            speed = 0L;
+    public float getSpeed() {
+        if (timeTag <= 0 || sizeTag <= 0)
+            speed = 0f;
         return speed;
     }
 
