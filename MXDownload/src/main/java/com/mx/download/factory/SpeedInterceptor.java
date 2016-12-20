@@ -1,6 +1,9 @@
 package com.mx.download.factory;
 
 /**
+ * 网速拦截器~
+ * 原理：动态调整下载线程sleep的时间
+ * <p>
  * 创建人： zhangmengxiong
  * 创建时间： 2016-12-14.
  * 联系方式: zmx_final@163.com
@@ -15,6 +18,9 @@ public class SpeedInterceptor {
      */
     SpeedInterceptor(int maxSpeed) {
         this.maxSpeed = maxSpeed;
+        if (maxSpeed > 0) {
+            sleepTime = 500;
+        }
     }
 
     /**

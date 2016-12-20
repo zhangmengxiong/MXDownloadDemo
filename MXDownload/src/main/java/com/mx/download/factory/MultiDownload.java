@@ -120,6 +120,7 @@ public class MultiDownload implements IDownload {
 
     @Override
     public void startDownload() throws Exception {
+        infoBean.cleanSpeed();
         infoBean.computeSpeed();
 
         MultiDownloadRun[] downloadThread = new MultiDownloadRun[chipBeans.length];

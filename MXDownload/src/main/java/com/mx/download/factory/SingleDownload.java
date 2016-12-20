@@ -124,6 +124,7 @@ public class SingleDownload implements IDownload {
 
     @Override
     public void startDownload() throws Exception {
+        infoBean.cleanSpeed();
         infoBean.computeSpeed();
 
         SingleDownloadRun downloadThread = new SingleDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor);
