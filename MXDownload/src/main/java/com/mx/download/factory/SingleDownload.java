@@ -152,7 +152,7 @@ public class SingleDownload implements IDownload {
             try {
                 infoBean.setDownloadSize(chipBean.completeSize);
                 infoBean.computeSpeed();
-                speedInterceptor.setCurrentSpeed((int) (infoBean.getAverageSpeed() / 1024f));
+                speedInterceptor.setCurrentSpeed((int) (infoBean.getSpeed() / 1024f));
                 if (downloadCall != null) {
                     downloadCall.onProgressUpdate(infoBean);
                 }

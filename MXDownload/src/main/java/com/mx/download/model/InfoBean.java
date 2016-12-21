@@ -83,7 +83,7 @@ public class InfoBean {
      */
     public void computeSpeed() {
         netSpeedBean.addNode(downloadSize);
-        curSpeedSize = netSpeedBean.getAverageSpeed(4);
+        curSpeedSize = netSpeedBean.getAverageSpeed();
     }
 
     /**
@@ -111,16 +111,6 @@ public class InfoBean {
      */
     public float getSpeed() {
         return curSpeedSize;
-    }
-
-    /**
-     * 获取8秒内的平均速度
-     * 单位：Bytes/s
-     *
-     * @return
-     */
-    public float getAverageSpeed() {
-        return netSpeedBean.getAverageSpeed(8);
     }
 
     /**

@@ -9,7 +9,7 @@ import java.util.LinkedList;
  * 联系方式: zmx_final@163.com
  */
 class NetSpeedBean {
-    private static final int MAX_SIZE = 10;
+    private static final int MAX_SIZE = 4;
     private final Object SYNC_OBJ = new Object();
     private LinkedList<NodeBean> speedQueue = new LinkedList<>();
 
@@ -39,21 +39,14 @@ class NetSpeedBean {
     /**
      * 获取最后x个节点的平均网速
      *
-     * @param count
      * @return
      */
-    float getAverageSpeed(int count) {
+    float getAverageSpeed() {
         NodeBean first, last;
         synchronized (SYNC_OBJ) {
             if (speedQueue.size() < 2) return 0f;
-
-            int index = speedQueue.size() - count;
-            if (index < 0) {
-                last = speedQueue.getFirst();
-            } else {
-                last = speedQueue.get(index);
-            }
             first = speedQueue.getLast();
+            last = speedQueue.getFirst();
         }
 
         float timeDiff = Math.abs(first.TIME_TAG - last.TIME_TAG); //单位：秒
