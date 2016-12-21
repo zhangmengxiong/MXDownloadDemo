@@ -19,7 +19,7 @@ public class SpeedInterceptor {
     SpeedInterceptor(int maxSpeed) {
         this.maxSpeed = maxSpeed;
         if (maxSpeed > 0) {
-            sleepTime = 500;
+            sleepTime = 100;
         }
     }
 
@@ -28,11 +28,9 @@ public class SpeedInterceptor {
      */
     void setCurrentSpeed(int curSpeed) {
         if (maxSpeed <= 0) return;
-        int diff = Math.abs(maxSpeed - curSpeed);
-        if (diff < 5) return;
-        diff = (int) Math.sqrt(diff);
+        if (Math.abs(maxSpeed - curSpeed) < 5) return;
 
-        sleepTime += ((curSpeed > maxSpeed) ? diff : -1 * diff);
+        sleepTime += ((curSpeed > maxSpeed) ? 5 : -5);
         if (sleepTime <= 0) {
             sleepTime = 0;
         }
@@ -43,12 +41,13 @@ public class SpeedInterceptor {
 
     /**
      * 拦截！
-     *
-     * @throws InterruptedException
      */
-    public void interceptor() throws InterruptedException {
+    public void interceptor() {
         if (sleepTime > 0) {
-            Thread.sleep(sleepTime);
+            try {
+                Thread.sleep(sleepTime);
+            } catch (Exception ignored) {
+            }
         }
     }
 }

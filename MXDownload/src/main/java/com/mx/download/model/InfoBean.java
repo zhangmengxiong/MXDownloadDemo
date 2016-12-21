@@ -18,9 +18,8 @@ public class InfoBean {
     private long downloadSize = 0L;
     public boolean isAcceptRanges = true;
 
-    private float timeTag = 0L;
-    private long sizeTag = 0L;
-    private float speed = 0L;
+    private NetSpeedBean netSpeedBean = new NetSpeedBean();
+    private float curSpeedSize = 0f;
 
     public InfoBean() {
     }
@@ -83,23 +82,16 @@ public class InfoBean {
      * 计算网速
      */
     public void computeSpeed() {
-        float timeDiff = Math.abs(Utils.currentCPUTimeMillis() - timeTag); //单位：秒
-        long sizeDiff = (downloadSize - sizeTag); // Bytes
-
-        if (speed <= 0 || timeDiff > 2) {
-            speed = (timeDiff > 0) ? (sizeDiff / timeDiff) : 0f;
-            timeTag = Utils.currentCPUTimeMillis();
-            sizeTag = downloadSize;
-        }
+        netSpeedBean.addNode(downloadSize);
+        curSpeedSize = netSpeedBean.getAverageSpeed(4);
     }
 
     /**
      * 清理网速计算标记
      */
     public void cleanSpeed() {
-        timeTag = 0f;
-        sizeTag = 0L;
-        speed = 0f;
+        netSpeedBean.resetSpeed();
+        curSpeedSize = 0f;
     }
 
     /**
@@ -108,7 +100,7 @@ public class InfoBean {
      * @return
      */
     public String getFormatSpeed() {
-        return Utils.formatSpeed(getSpeed());
+        return Utils.formatSpeed(curSpeedSize);
     }
 
     /**
@@ -118,9 +110,17 @@ public class InfoBean {
      * @return
      */
     public float getSpeed() {
-        if (timeTag <= 0 || sizeTag <= 0)
-            speed = 0f;
-        return speed;
+        return curSpeedSize;
+    }
+
+    /**
+     * 获取8秒内的平均速度
+     * 单位：Bytes/s
+     *
+     * @return
+     */
+    public float getAverageSpeed() {
+        return netSpeedBean.getAverageSpeed(8);
     }
 
     /**

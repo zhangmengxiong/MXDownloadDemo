@@ -12,9 +12,9 @@ public class Utils {
         String hrSize;
 
         double k = size / 1024.0;
-        double m = ((size / 1024.0) / 1024.0);
-        double g = (((size / 1024.0) / 1024.0) / 1024.0);
-        double t = ((((size / 1024.0) / 1024.0) / 1024.0) / 1024.0);
+        double m = (k / 1024.0);
+        double g = (m / 1024.0);
+        double t = (g / 1024.0);
 
         DecimalFormat dec = new DecimalFormat("0.00");
 
@@ -113,15 +113,5 @@ public class Utils {
             status = null;
         }
         return status;
-    }
-
-    /**
-     * 获取当前CPU的时间点
-     * 单位：秒
-     *
-     * @return
-     */
-    public static float currentCPUTimeMillis() {
-        return (System.nanoTime() / 1000000000f);
     }
 }

@@ -51,7 +51,7 @@ class Download {
         // 第二部 获取服务器信息
         prepareUrl();
 
-        if (isSingleThread) {
+        if (isSingleThread || infoBean.getTotalSize() < (1024 * 1024 * 10)) { // 小于10MB  单线程下载
             // 单线程下载器
             iDownload = new SingleDownload();
         } else {
