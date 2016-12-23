@@ -52,7 +52,7 @@ class Download {
         // 第二部 获取服务器信息
         prepareUrl();
 
-        if (!infoBean.isSupportRanges() || infoBean.isChunked()) {
+        if (!infoBean.isSupportRanges() || infoBean.isUnknownSize()) {
             iDownload = new NoHistoryDownload();
         } else if (isSingleThread) {
             // 单线程下载器
@@ -108,7 +108,7 @@ class Download {
         if (infoBean == null) {
             throw new Exception("获取服务器信息失败！");
         }
-        if (infoBean.isChunked()) {
+        if (infoBean.isUnknownSize()) {
             Log.v("下载资源大小未知！");
         }
         if (!infoBean.isSupportRanges()) {

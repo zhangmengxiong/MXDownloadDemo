@@ -73,7 +73,7 @@ public class Utils {
         try {
             l = Long.parseLong(connection.getHeaderField("Content-Length"));
         } catch (Exception ignored) {
-            l = -1;
+            l = 0;
         }
         return l;
     }
@@ -100,6 +100,8 @@ public class Utils {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
             conn.setRequestProperty("Accept-Ranges", "bytes");
             conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.setReadTimeout(1000 * 15);
+            conn.setConnectTimeout(1000 * 15);
             conn.connect();
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {
@@ -107,7 +109,7 @@ public class Utils {
                 status.setLastModify(getLastModify(conn));
 
                 long maxSize = getContentLength(conn);
-                status.isChunked = (isChunked(conn) || maxSize <= 0);
+                status.isUnknownSize = (isChunked(conn) || maxSize <= 0);
                 status.isAcceptRanges = isAcceptRanges(conn);
 
                 status.setDownloadSize(0L);

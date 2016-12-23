@@ -12,7 +12,7 @@ import com.mx.download.utils.Utils;
  * 表示下载状态, 如果isChunked为true, totalSize 可能不存在
  */
 public class InfoBean {
-    public boolean isChunked = false; // 未知大小的文件
+    public boolean isUnknownSize = false; // 未知大小的文件
     private String lastModify = "";
     private long totalSize = 0L;
     private long downloadSize = 0L;
@@ -70,8 +70,8 @@ public class InfoBean {
         return getFormatDownloadSize() + "/" + getFormatTotalSize();
     }
 
-    public boolean isChunked() {
-        return isChunked || totalSize <= 0;
+    public boolean isUnknownSize() {
+        return isUnknownSize || totalSize <= 0;
     }
 
     public boolean isSupportRanges() {
