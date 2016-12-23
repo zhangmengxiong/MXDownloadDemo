@@ -41,6 +41,6 @@ public class DownChipBean implements Serializable {
      */
     public void addDownloadSize(int length) {
         completeSize = completeSize + length;
-        if (completeSize > end - start) completeSize = end - start;
+        if (end > 0 && completeSize > end - start) completeSize = end - start;
     }
 }

@@ -68,7 +68,7 @@ public class MultiDownload implements IDownload {
 
     @Override
     public void prepareHistory() throws Exception {
-        if (infoBean.isChunked || infoBean.getTotalSize() <= 0) return;
+        if (infoBean.isChunked()) return;
 
         if (positionFile.exists() && positionFile.length() > 0) // 如果缓存文件已经存在，表明之前已经下载过一部分
         {

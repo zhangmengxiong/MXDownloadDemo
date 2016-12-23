@@ -3,6 +3,7 @@ package com.mx.download;
 
 import com.mx.download.factory.IDownload;
 import com.mx.download.factory.MultiDownload;
+import com.mx.download.factory.NoHistoryDownload;
 import com.mx.download.factory.SingleDownload;
 import com.mx.download.model.ConfigBean;
 import com.mx.download.model.InfoBean;
@@ -51,13 +52,19 @@ class Download {
         // 第二部 获取服务器信息
         prepareUrl();
 
-        if (isSingleThread || infoBean.getTotalSize() < (1024 * 1024 * 10)) { // 小于10MB  单线程下载
+        if (!infoBean.isSupportRanges() || infoBean.isChunked()) {
+            iDownload = new NoHistoryDownload();
+        } else if (isSingleThread) {
             // 单线程下载器
+            iDownload = new SingleDownload();
+        } else if (infoBean.getTotalSize() < (1024 * 1024 * 10)) {
+            // 小于10MB  单线程下载
             iDownload = new SingleDownload();
         } else {
             // 默认多线程下载
             iDownload = new MultiDownload();
         }
+        Log.v("下载器：" + iDownload.getClass().getSimpleName());
 
         iDownload.setInfo(configBean, infoBean);
 

@@ -78,7 +78,7 @@ public class DownAdapter extends BaseAdapter {
                             .download(bean.URL) // 200M
                             .save(bean.SAVE)
                             .maxThread(3)
-                            .limitSpeed(600)
+                            .limitSpeed(1024 * 2)
 //                            .maxRetryCount(3)
 //                            .singleThread()
                             .addAsyncCall(new IDownLoadCall() {
@@ -98,6 +98,7 @@ public class DownAdapter extends BaseAdapter {
                                 @Override
                                 public void onError(Throwable th) {
                                     Log.v("proc", "onError");
+                                    viewHolder.info.setText("下载失败");
                                 }
 
                                 @Override
@@ -110,6 +111,8 @@ public class DownAdapter extends BaseAdapter {
                                 @Override
                                 public void onSuccess(String url) {
                                     Log.v("proc", "onSuccess");
+                                    viewHolder.progressBar.setProgress(100);
+                                    viewHolder.info.setText("下载完成");
                                 }
 
                                 @Override

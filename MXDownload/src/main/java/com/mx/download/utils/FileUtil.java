@@ -63,7 +63,7 @@ public class FileUtil {
         if (mb > 10) {
             size = (mb / 20) + 1;
         }
-        if (size > 10) size = 10;
+        if (size > 20) size = 20;
         return size;
     }
 

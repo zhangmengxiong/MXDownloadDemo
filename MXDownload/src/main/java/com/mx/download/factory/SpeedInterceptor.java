@@ -28,14 +28,25 @@ public class SpeedInterceptor {
      */
     void setCurrentSpeed(int curSpeed) {
         if (maxSpeed <= 0) return;
-        if (Math.abs(maxSpeed - curSpeed) < 5) return;
+        int diff = Math.abs(maxSpeed - curSpeed);
+        if (diff < 20) return;
 
-        sleepTime += ((curSpeed > maxSpeed) ? 5 : -5);
+        if (diff > 400) {
+            diff = 5;
+        } else if (diff > 200) {
+            diff = 3;
+        } else if (diff > 100) {
+            diff = 2;
+        } else {
+            diff = 1;
+        }
+
+        sleepTime += ((curSpeed > maxSpeed) ? diff : -diff);
         if (sleepTime <= 0) {
             sleepTime = 0;
         }
         if (sleepTime > 1000) {
-            sleepTime = 990;
+            sleepTime = 900;
         }
     }
 

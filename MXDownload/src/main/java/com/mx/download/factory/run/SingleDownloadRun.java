@@ -73,6 +73,7 @@ public class SingleDownloadRun implements Runnable {
 
                     saveFile.write(buff, length); // 写入文件内容
                     chipBeen.addDownloadSize(length);
+                    if (chipBeen.isComplete()) break;
                     if (speedInterceptor != null) speedInterceptor.interceptor();
                 }
 

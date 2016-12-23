@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 
 public class Utils {
     public static String formatSize(long size) {
+        if (size < 0) size = 0L;
         String hrSize;
 
         double k = size / 1024.0;
@@ -31,6 +32,7 @@ public class Utils {
     }
 
     public static String formatSpeed(float size) {
+        if (size < 0) size = 0L;
         String hrSize;
 
         double k = size / 1024.0;
@@ -61,12 +63,12 @@ public class Utils {
         }
     }
 
-    static boolean isChunked(HttpURLConnection connection) {
+    private static boolean isChunked(HttpURLConnection connection) {
         String range = connection.getHeaderField("Transfer-Encoding");
         return range != null && range.equalsIgnoreCase("chunked");
     }
 
-    static long getContentLength(HttpURLConnection connection) {
+    private static long getContentLength(HttpURLConnection connection) {
         long l;
         try {
             l = Long.parseLong(connection.getHeaderField("Content-Length"));
@@ -76,11 +78,11 @@ public class Utils {
         return l;
     }
 
-    static String getLastModify(HttpURLConnection connection) {
+    private static String getLastModify(HttpURLConnection connection) {
         return connection.getHeaderField("Last-Modified");
     }
 
-    static boolean isAcceptRanges(HttpURLConnection connection) {
+    private static boolean isAcceptRanges(HttpURLConnection connection) {
         String range = connection.getHeaderField("Accept-Ranges");
         return range != null && range.equalsIgnoreCase("bytes");
     }
@@ -96,6 +98,9 @@ public class Utils {
         try {
             URL url = new URL(fromUrl);// 获取资源路径
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
+            conn.setRequestProperty("Accept-Ranges", "bytes");
+            conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.connect();
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {
                 status = new InfoBean();
@@ -106,7 +111,7 @@ public class Utils {
                 status.isAcceptRanges = isAcceptRanges(conn);
 
                 status.setDownloadSize(0L);
-                status.setTotalSize(maxSize);
+                status.setTotalSize((maxSize <= 0 ? 0 : maxSize));
             }
         } catch (Exception e) {
             e.printStackTrace();

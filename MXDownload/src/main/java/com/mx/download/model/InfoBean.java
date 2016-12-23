@@ -71,7 +71,7 @@ public class InfoBean {
     }
 
     public boolean isChunked() {
-        return isChunked;
+        return isChunked || totalSize <= 0;
     }
 
     public boolean isSupportRanges() {
@@ -120,7 +120,7 @@ public class InfoBean {
      */
     public float getPercent() {
         float result;
-        if (totalSize == 0L) {
+        if (totalSize <= 0L) {
             result = 0.0f;
         } else {
             result = downloadSize * 1.0f / totalSize;
