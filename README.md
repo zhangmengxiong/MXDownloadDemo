@@ -63,17 +63,17 @@
 下载进度中有以下信息可以直接获得：
 获得当前瞬时网速
 ```Java
-			mxDownload.getFormatSpeed(); // 20.5 KB/s
+			InfoBean.getFormatSpeed(); // 20.5 KB/s
 ```
 获得下载大小信息
 ```Java
-			mxDownload.getFormatTotalSize(); // 10 MB 文件总大小
-			mxDownload.getFormatDownloadSize(); // 5.65 MB 当前下载的大小
-			mxDownload.getFormatStatusString(); // 5.65 MB/10 MB 当前下载的大小
+			InfoBean.getFormatTotalSize(); // 10 MB 文件总大小
+			InfoBean.getFormatDownloadSize(); // 5.65 MB 当前下载的大小
+			InfoBean.getFormatStatusString(); // 5.65 MB/10 MB 当前下载的大小
 ```
 获取下载进度：
 ```Java
-			mxDownload.getPercent(); // 0.5 对应 50%
+			InfoBean.getPercent(); // 0.5 对应 50%
 ```
 
 注意:
