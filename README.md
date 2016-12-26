@@ -83,11 +83,11 @@
 			InfoBean.getPercent(); // 0.5 对应 50%
 ```
 
-注意:
-1：addAsyncCall 与 addCall 只能选择一个设置回调
-2：maxThread 与 singleThread 只能调用其中一个方法，同时调用时后调用的生效
-3：addAsyncCall 为异步回调，回调函数为main线程中运行
-	 addCall 为同步回调，回调函数在异步线程中运行。
+注意:<br />
+1：addAsyncCall 与 addCall 只能选择一个设置回调<br />
+2：maxThread 与 singleThread 只能调用其中一个方法，同时调用时后调用的生效<br />
+3：addAsyncCall 为异步回调，回调函数为main线程中运行<br />
+	 addCall 为同步回调，回调函数在异步线程中运行。<br />
 
 
 ### 联系方式： zmx_final@163.com
