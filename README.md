@@ -1,5 +1,12 @@
 # MXDownloadDemo
 简单的一个Android平台多线程下载demo
+支持：
+1：多线程下载
+2：单线程下载
+3：未知大小的文件下载
+4：网速限制
+5：断点下载（未知大小文件不支持断点）
+
 用法：
 ```Java
 	MXDownload mxDownload = MXDownload.getInstance()
