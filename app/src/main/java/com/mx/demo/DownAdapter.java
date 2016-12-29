@@ -77,8 +77,8 @@ public class DownAdapter extends BaseAdapter {
                     bean.mxDownload = MXDownload.getInstance()
                             .download(bean.URL) // 200M
                             .save(bean.SAVE)
-                            .maxThread(3)
-                            .limitSpeed(500)
+                            .maxThread(7)
+                            .limitSpeed(1024 * 2)
 //                            .maxRetryCount(3)
 //                            .singleThread()
                             .addAsyncCall(new IDownLoadCall() {
