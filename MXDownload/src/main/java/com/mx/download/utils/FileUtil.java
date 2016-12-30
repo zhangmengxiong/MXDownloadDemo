@@ -2,7 +2,7 @@ package com.mx.download.utils;
 
 import com.mx.download.model.DownChipBean;
 import com.mx.download.model.DownType;
-import com.mx.download.model.InfoBean;
+import com.mx.download.model.DownInfo;
 import com.mx.download.model.SaveBean;
 
 import java.io.File;
@@ -113,16 +113,17 @@ public class FileUtil {
      *
      * @param positionFile
      * @param been
-     * @param status
+     * @param bean
      */
-    public static void writeMulityPosition(File positionFile, DownChipBean[] been, InfoBean status) {
+    public static void writeMulityPosition(File positionFile, DownChipBean[] been, DownInfo bean) {
         try {
             SaveBean saveMod = new SaveBean();
             saveMod.downChipBeen = been;
             saveMod.type = DownType.TYPE_MULITY;
-            saveMod.LastModify = status.getLastModify();
-            saveMod.fileSize = status.getTotalSize();
-            saveMod.completeSize = status.getDownloadSize();
+            saveMod.LastModify = bean.lastModify;
+            saveMod.Etag = bean.Etag;
+            saveMod.fileSize = bean.totalSize;
+            saveMod.completeSize = bean.downloadSize;
 
             ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(positionFile));
             stream.writeObject(saveMod);
@@ -137,16 +138,17 @@ public class FileUtil {
      *
      * @param positionFile
      * @param chipBean
-     * @param status
+     * @param bean
      */
-    public static void writeSinglePosition(File positionFile, DownChipBean chipBean, InfoBean status) {
+    public static void writeSinglePosition(File positionFile, DownChipBean chipBean, DownInfo bean) {
         try {
             SaveBean saveMod = new SaveBean();
             saveMod.downChipBeen = new DownChipBean[]{chipBean};
             saveMod.type = DownType.TYPE_SINGLE;
-            saveMod.LastModify = status.getLastModify();
-            saveMod.fileSize = status.getTotalSize();
-            saveMod.completeSize = status.getDownloadSize();
+            saveMod.LastModify = bean.lastModify;
+            saveMod.Etag = bean.Etag;
+            saveMod.fileSize = bean.totalSize;
+            saveMod.completeSize = bean.downloadSize;
 
             ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(positionFile));
             stream.writeObject(saveMod);

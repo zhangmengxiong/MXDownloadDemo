@@ -3,7 +3,7 @@ package com.mx.download.factory;
 import com.mx.download.factory.run.NoHistoryDownloadRun;
 import com.mx.download.model.ConfigBean;
 import com.mx.download.model.DownChipBean;
-import com.mx.download.model.InfoBean;
+import com.mx.download.model.DownInfo;
 import com.mx.download.utils.FileUtil;
 import com.mx.download.utils.IDownLoadCall;
 import com.mx.download.utils.Log;
@@ -36,11 +36,11 @@ public class NoHistoryDownload implements IDownload {
     private int errorNo = 0;
     private int retryMax = 3;
     private volatile SpeedInterceptor speedInterceptor;
-    private InfoBean infoBean;
+    private DownInfo downInfo;
 
     @Override
-    public void setInfo(ConfigBean configBean, InfoBean status) {
-        infoBean = status;
+    public void setInfo(ConfigBean configBean, DownInfo status) {
+        downInfo = status;
 
         this.retryMax = configBean.getMaxRetryCount();
         this.executor = configBean.getExecutorService();
@@ -55,7 +55,7 @@ public class NoHistoryDownload implements IDownload {
 
     @Override
     public void prepareSave() throws Exception {
-        if (infoBean.getTotalSize() + 1024 * 1024 * 5 > cacheFile.getFreeSpace()) {
+        if (downInfo.totalSize + 1024 * 1024 * 5 > cacheFile.getFreeSpace()) {
             Log.v("剩余磁盘容量：" + Utils.formatSize(cacheFile.getFreeSpace()));
             throw new Exception("磁盘容量不足！");
         }
@@ -71,15 +71,15 @@ public class NoHistoryDownload implements IDownload {
         chipBean = new DownChipBean();// 获取下载位置
         chipBean.start = 0;
         chipBean.end = 0;
-        if (infoBean.getTotalSize() > 0) {
-            chipBean.end = infoBean.getTotalSize();
+        if (downInfo.totalSize > 0) {
+            chipBean.end = downInfo.totalSize;
         }
     }
 
     @Override
     public void startDownload() throws Exception {
-        infoBean.cleanSpeed();
-        infoBean.computeSpeed();
+        downInfo.cleanSpeed();
+        downInfo.computeSpeed();
 
         NoHistoryDownloadRun downloadThread = new NoHistoryDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor);
         executor.execute(downloadThread);
@@ -104,11 +104,11 @@ public class NoHistoryDownload implements IDownload {
                 stop = false;// 只要有一个下载线程没有执行结束，则文件还没有下载完毕
             }
             try {
-                infoBean.setDownloadSize(chipBean.completeSize);
-                infoBean.computeSpeed();
-                speedInterceptor.setCurrentSpeed((int) (infoBean.getSpeed() / 1024f));
+                downInfo.downloadSize = chipBean.completeSize;
+                downInfo.computeSpeed();
+                speedInterceptor.setCurrentSpeed((int) (downInfo.curSpeedSize / 1024f));
                 if (downloadCall != null) {
-                    downloadCall.onProgressUpdate(infoBean);
+                    downloadCall.onProgressUpdate(downInfo.getInfoBean());
                 }
 
                 Thread.sleep(SLEEP_TIME);// 每隔0.5秒更新一次下载位置信息
@@ -123,7 +123,7 @@ public class NoHistoryDownload implements IDownload {
         }
         updatePosition();// 更新下载位置信息
 
-        FileUtil.writeSinglePosition(positionFile, chipBean, infoBean);
+        FileUtil.writeSinglePosition(positionFile, chipBean, downInfo);
         downloadThread.stop();
 
         if (isError) {
@@ -150,10 +150,10 @@ public class NoHistoryDownload implements IDownload {
      * 计算下载完成的百分比
      */
     private synchronized void updatePosition() {
-        infoBean.setDownloadSize(chipBean.completeSize);
-        infoBean.cleanSpeed();
+        downInfo.downloadSize = chipBean.completeSize;
+        downInfo.cleanSpeed();
         if (downloadCall != null) {
-            downloadCall.onProgressUpdate(infoBean);
+            downloadCall.onProgressUpdate(downInfo.getInfoBean());
         }
     }
 

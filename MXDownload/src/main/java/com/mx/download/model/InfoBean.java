@@ -1,51 +1,49 @@
 package com.mx.download.model;
 
-
 import com.mx.download.utils.Utils;
 
 /**
- * 保存从下载地址读取出来的信息的对象
- * <p>
- * User: zhangmengxiong
- * Date: 2016-07-15
- * Time: 15:48
- * 表示下载状态, 如果isChunked为true, totalSize 可能不存在
+ * 创建人： zhangmengxiong
+ * 创建时间： 2016-12-30.
+ * 联系方式: zmx_final@163.com
  */
+
 public class InfoBean {
-    public boolean isUnknownSize = false; // 未知大小的文件
-    private String lastModify = "";
-    private long totalSize = 0L;
-    private long downloadSize = 0L;
-    public boolean isAcceptRanges = true;
+    private DownInfo downInfo;
 
-    private NetSpeedBean netSpeedBean = new NetSpeedBean();
-    private float curSpeedSize = 0f;
-
-    public InfoBean() {
+    InfoBean(DownInfo bean) {
+        downInfo = bean;
     }
 
-    public long getTotalSize() {
-        return totalSize;
+    public String getEtag() {
+        return downInfo.Etag;
     }
 
-    public void setTotalSize(long totalSize) {
-        this.totalSize = totalSize;
-    }
-
-    public long getDownloadSize() {
-        return downloadSize;
-    }
-
-    public void setDownloadSize(long downloadSize) {
-        this.downloadSize = downloadSize;
-    }
-
-    public void setLastModify(String lastModify) {
-        this.lastModify = lastModify;
-    }
-
+    /**
+     * 获取服务器文件最后修改的时间
+     *
+     * @return
+     */
     public String getLastModify() {
-        return lastModify;
+        return downInfo.lastModify;
+    }
+
+    /**
+     * 获取已下载大小
+     *
+     * @return 单位：Byte
+     */
+    public long getDownloadSize() {
+        return downInfo.downloadSize;
+    }
+
+    /**
+     * 获取下载总大小
+     *
+     * @return 单位：Byte
+     */
+    public long getTotalSize() {
+        return downInfo.totalSize;
     }
 
     /**
@@ -54,11 +52,16 @@ public class InfoBean {
      * @return example: 2KB , 10MB
      */
     public String getFormatTotalSize() {
-        return Utils.formatSize(totalSize);
+        return Utils.formatSize(downInfo.totalSize);
     }
 
+    /**
+     * 获得格式化的下载完成的大小
+     *
+     * @return example: 2KB , 10MB
+     */
     public String getFormatDownloadSize() {
-        return Utils.formatSize(downloadSize);
+        return Utils.formatSize(downInfo.downloadSize);
     }
 
     /**
@@ -67,50 +70,7 @@ public class InfoBean {
      * @return example: 2MB/36MB
      */
     public String getFormatStatusString() {
-        return getFormatDownloadSize() + "/" + getFormatTotalSize();
-    }
-
-    public boolean isUnknownSize() {
-        return isUnknownSize || totalSize <= 0;
-    }
-
-    public boolean isSupportRanges() {
-        return isAcceptRanges;
-    }
-
-    /**
-     * 计算网速
-     */
-    public void computeSpeed() {
-        netSpeedBean.addNode(downloadSize);
-        curSpeedSize = netSpeedBean.getAverageSpeed();
-    }
-
-    /**
-     * 清理网速计算标记
-     */
-    public void cleanSpeed() {
-        netSpeedBean.resetSpeed();
-        curSpeedSize = 0f;
-    }
-
-    /**
-     * 获取下载速度
-     *
-     * @return
-     */
-    public String getFormatSpeed() {
-        return Utils.formatSpeed(curSpeedSize);
-    }
-
-    /**
-     * 返回即时下载速度
-     * 单位：Bytes/s
-     *
-     * @return
-     */
-    public float getSpeed() {
-        return curSpeedSize;
+        return Utils.formatSize(downInfo.downloadSize) + "/" + Utils.formatSize(downInfo.totalSize);
     }
 
     /**
@@ -120,11 +80,30 @@ public class InfoBean {
      */
     public float getPercent() {
         float result;
-        if (totalSize <= 0L) {
+        if (downInfo.totalSize <= 0L) {
             result = 0.0f;
         } else {
-            result = downloadSize * 1.0f / totalSize;
+            result = downInfo.downloadSize * 1.0f / downInfo.totalSize;
         }
         return result;
+    }
+
+    /**
+     * 获取下载速度
+     *
+     * @return
+     */
+    public String getFormatSpeed() {
+        return Utils.formatSpeed(downInfo.curSpeedSize);
+    }
+
+    /**
+     * 返回即时下载速度
+     * 单位：Bytes/s
+     *
+     * @return
+     */
+    public float getSpeed() {
+        return downInfo.curSpeedSize;
     }
 }

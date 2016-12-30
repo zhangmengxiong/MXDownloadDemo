@@ -11,5 +11,6 @@ public class SaveBean implements Serializable {
     public long fileSize;
     public long completeSize;
     public String LastModify = null;
+    public String Etag = null;
     public DownChipBean[] downChipBeen;
 }

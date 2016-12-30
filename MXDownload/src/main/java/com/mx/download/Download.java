@@ -6,7 +6,7 @@ import com.mx.download.factory.MultiDownload;
 import com.mx.download.factory.NoHistoryDownload;
 import com.mx.download.factory.SingleDownload;
 import com.mx.download.model.ConfigBean;
-import com.mx.download.model.InfoBean;
+import com.mx.download.model.DownInfo;
 import com.mx.download.utils.FileUtil;
 import com.mx.download.utils.IDownLoadCall;
 import com.mx.download.utils.Log;
@@ -29,7 +29,7 @@ class Download {
 
     private volatile boolean isUserCancel = false;
     private File cacheFile;
-    private InfoBean infoBean;
+    private DownInfo downInfo;
 
     Download(ConfigBean configBean) {
         this.configBean = configBean;
@@ -52,12 +52,12 @@ class Download {
         // 第二部 获取服务器信息
         prepareUrl();
 
-        if (!infoBean.isSupportRanges() || infoBean.isUnknownSize()) {
+        if (!downInfo.isAcceptRanges || downInfo.isUnknownSize) {
             iDownload = new NoHistoryDownload();
         } else if (isSingleThread) {
             // 单线程下载器
             iDownload = new SingleDownload();
-        } else if (infoBean.getTotalSize() < (1024 * 1024 * 10)) {
+        } else if (downInfo.totalSize < (1024 * 1024 * 10)) {
             // 小于10MB  单线程下载
             iDownload = new SingleDownload();
         } else {
@@ -66,7 +66,7 @@ class Download {
         }
         Log.v("下载器：" + iDownload.getClass().getSimpleName());
 
-        iDownload.setInfo(configBean, infoBean);
+        iDownload.setInfo(configBean, downInfo);
 
         // 第三步 判断磁盘容量
         iDownload.prepareSave();
@@ -77,7 +77,7 @@ class Download {
         // 第五步 如果是第一次下载，则初始化下载的数据
         iDownload.prepareFirstInit();
 
-        Log.v("下载：" + fromUrl + " 初始化成功:" + infoBean.getFormatStatusString());
+        Log.v("下载：" + fromUrl + " 初始化成功:" + downInfo);
 
         // 校验用户退出响应
         if (isUserCancel) {
@@ -86,7 +86,7 @@ class Download {
             return;
         }
 
-        if (iDownLoadCall != null) iDownLoadCall.onStart(infoBean);
+        if (iDownLoadCall != null) iDownLoadCall.onStart(downInfo.getInfoBean());
 
         iDownload.startDownload();
     }
@@ -104,14 +104,14 @@ class Download {
     }
 
     private void prepareUrl() throws Exception {
-        infoBean = Utils.getFileSize(fromUrl);
-        if (infoBean == null) {
+        downInfo = Utils.getFileSize(fromUrl);
+        if (downInfo == null) {
             throw new Exception("获取服务器信息失败！");
         }
-        if (infoBean.isUnknownSize()) {
+        if (downInfo.isUnknownSize) {
             Log.v("下载资源大小未知！");
         }
-        if (!infoBean.isSupportRanges()) {
+        if (!downInfo.isAcceptRanges) {
             Log.v("下载资源不支持断点下载！");
         }
     }

@@ -15,17 +15,17 @@ public abstract class IDownLoadCall {
     /**
      * 开始下载
      *
-     * @param status 下载的信息
+     * @param infoBean 下载的信息
      */
-    public void onStart(InfoBean status) {
+    public void onStart(InfoBean infoBean) {
     }
 
     /**
      * 下载进度更新
      *
-     * @param status
+     * @param infoBean
      */
-    public void onProgressUpdate(InfoBean status) {
+    public void onProgressUpdate(InfoBean infoBean) {
     }
 
     /**

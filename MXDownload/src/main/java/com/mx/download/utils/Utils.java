@@ -1,6 +1,6 @@
 package com.mx.download.utils;
 
-import com.mx.download.model.InfoBean;
+import com.mx.download.model.DownInfo;
 
 import java.io.Closeable;
 import java.net.HttpURLConnection;
@@ -82,6 +82,10 @@ public class Utils {
         return connection.getHeaderField("Last-Modified");
     }
 
+    private static String getEtag(HttpURLConnection connection) {
+        return connection.getHeaderField("Etag");
+    }
+
     private static boolean isAcceptRanges(HttpURLConnection connection) {
         String range = connection.getHeaderField("Accept-Ranges");
         return range != null && range.equalsIgnoreCase("bytes");
@@ -93,8 +97,8 @@ public class Utils {
      * @param fromUrl
      * @return
      */
-    public static InfoBean getFileSize(String fromUrl) {
-        InfoBean status = null;
+    public static DownInfo getFileSize(String fromUrl) {
+        DownInfo status = null;
         try {
             URL url = new URL(fromUrl);// 获取资源路径
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
@@ -105,15 +109,18 @@ public class Utils {
             conn.connect();
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {
-                status = new InfoBean();
-                status.setLastModify(getLastModify(conn));
+                status = new DownInfo();
+                status.lastModify = (getLastModify(conn));
+                status.Etag = (getEtag(conn));
 
                 long maxSize = getContentLength(conn);
                 status.isUnknownSize = (isChunked(conn) || maxSize <= 0);
                 status.isAcceptRanges = isAcceptRanges(conn);
 
-                status.setDownloadSize(0L);
-                status.setTotalSize((maxSize <= 0 ? 0 : maxSize));
+                status.downloadSize = 0;
+                status.totalSize = (maxSize <= 0 ? 0 : maxSize);
+
+                Log.v(conn.getHeaderFields().toString());
             }
         } catch (Exception e) {
             e.printStackTrace();

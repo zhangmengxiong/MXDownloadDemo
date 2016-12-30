@@ -1,7 +1,7 @@
 package com.mx.download.factory;
 
 import com.mx.download.model.ConfigBean;
-import com.mx.download.model.InfoBean;
+import com.mx.download.model.DownInfo;
 
 /**
  * 模板模式的接口定义~
@@ -18,7 +18,7 @@ public interface IDownload {
      * @param bean
      * @param status
      */
-    void setInfo(ConfigBean bean, InfoBean status);
+    void setInfo(ConfigBean bean, DownInfo status);
 
     /**
      * 准备下载的文件
