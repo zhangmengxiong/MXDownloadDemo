@@ -69,7 +69,7 @@ public class Utils {
         String result = null;
         for (String s : connection.getHeaderFields().keySet()) {
             if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Transfer-Encoding")) {
-                result = connection.getHeaderField(s);
+                result = connection.getHeaderField(s).trim();
                 break;
             }
         }
@@ -81,7 +81,7 @@ public class Utils {
         String result = null;
         for (String s : connection.getHeaderFields().keySet()) {
             if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Content-Length")) {
-                result = connection.getHeaderField(s);
+                result = connection.getHeaderField(s).trim();
                 break;
             }
         }
@@ -97,7 +97,7 @@ public class Utils {
         String result = null;
         for (String s : connection.getHeaderFields().keySet()) {
             if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Last-Modified")) {
-                result = connection.getHeaderField(s);
+                result = connection.getHeaderField(s).trim();
                 break;
             }
         }
@@ -108,7 +108,7 @@ public class Utils {
         String result = null;
         for (String s : connection.getHeaderFields().keySet()) {
             if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("etag")) {
-                result = connection.getHeaderField(s);
+                result = connection.getHeaderField(s).trim();
                 break;
             }
         }
@@ -119,7 +119,7 @@ public class Utils {
         String result = null;
         for (String s : connection.getHeaderFields().keySet()) {
             if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Accept-Ranges")) {
-                result = connection.getHeaderField(s);
+                result = connection.getHeaderField(s).trim();
                 break;
             }
         }
