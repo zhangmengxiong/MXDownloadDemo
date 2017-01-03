@@ -1,6 +1,8 @@
 package com.mx.download.model;
 
 
+import com.mx.download.utils.Utils;
+
 /**
  * 保存从下载地址读取出来的信息的对象
  * <p>
@@ -17,9 +19,9 @@ public class DownInfo {
     public long downloadSize = 0L; // 下载完成大小
     public boolean isAcceptRanges = true; // 是否可以断点下载
     public float curSpeedSize = 0f; // 当前下载速度
+    public InfoBean infoBean = new InfoBean(this); // 回调返回对象
 
     private NetSpeedBean netSpeedBean = new NetSpeedBean(); // 网速计数器
-    private InfoBean infoBean = new InfoBean(this); // 回调返回对象
 
     /**
      * 计算网速
@@ -45,7 +47,8 @@ public class DownInfo {
         return ("" + Etag).equals(s);
     }
 
-    public InfoBean getInfoBean() {
-        return infoBean;
+    @Override
+    public String toString() {
+        return Utils.formatSize(downloadSize) + "/" + Utils.formatSize(totalSize);
     }
 }

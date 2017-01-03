@@ -86,7 +86,9 @@ class Download {
             return;
         }
 
-        if (iDownLoadCall != null) iDownLoadCall.onStart(downInfo.getInfoBean());
+        if (iDownLoadCall != null) {
+            iDownLoadCall.onStart(downInfo.infoBean);
+        }
 
         iDownload.startDownload();
     }

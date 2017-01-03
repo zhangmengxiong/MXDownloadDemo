@@ -74,7 +74,7 @@ public class InfoBean {
      *
      * @return example: 2MB/36MB
      */
-    public String getFormatStatusString() {
+    public String getFormatSize() {
         return Utils.formatSize(downInfo.downloadSize) + "/" + Utils.formatSize(downInfo.totalSize);
     }
 

@@ -156,7 +156,7 @@ public class MultiDownload implements IDownload {
                 downInfo.computeSpeed();
                 speedInterceptor.setCurrentSpeed((int) (downInfo.curSpeedSize / 1024f));
                 if (downloadCall != null) {
-                    downloadCall.onProgressUpdate(downInfo.getInfoBean());
+                    downloadCall.onProgressUpdate(downInfo.infoBean);
                 }
 
                 Thread.sleep(SLEEP_TIME);// 每隔0.5秒更新一次下载位置信息
@@ -213,7 +213,7 @@ public class MultiDownload implements IDownload {
         downInfo.downloadSize = finishLength;
         downInfo.cleanSpeed();
         if (downloadCall != null) {
-            downloadCall.onProgressUpdate(downInfo.getInfoBean());
+            downloadCall.onProgressUpdate(downInfo.infoBean);
         }
     }
 

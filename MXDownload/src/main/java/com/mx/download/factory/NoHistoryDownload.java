@@ -108,7 +108,7 @@ public class NoHistoryDownload implements IDownload {
                 downInfo.computeSpeed();
                 speedInterceptor.setCurrentSpeed((int) (downInfo.curSpeedSize / 1024f));
                 if (downloadCall != null) {
-                    downloadCall.onProgressUpdate(downInfo.getInfoBean());
+                    downloadCall.onProgressUpdate(downInfo.infoBean);
                 }
 
                 Thread.sleep(SLEEP_TIME);// 每隔0.5秒更新一次下载位置信息
@@ -153,7 +153,7 @@ public class NoHistoryDownload implements IDownload {
         downInfo.downloadSize = chipBean.completeSize;
         downInfo.cleanSpeed();
         if (downloadCall != null) {
-            downloadCall.onProgressUpdate(downInfo.getInfoBean());
+            downloadCall.onProgressUpdate(downInfo.infoBean);
         }
     }
 
