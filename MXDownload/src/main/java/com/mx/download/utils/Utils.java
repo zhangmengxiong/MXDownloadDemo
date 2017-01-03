@@ -1,5 +1,7 @@
 package com.mx.download.utils;
 
+import android.text.TextUtils;
+
 import com.mx.download.model.DownInfo;
 
 import java.io.Closeable;
@@ -64,31 +66,65 @@ public class Utils {
     }
 
     private static boolean isChunked(HttpURLConnection connection) {
-        String range = connection.getHeaderField("Transfer-Encoding");
-        return range != null && range.equalsIgnoreCase("chunked");
+        String result = null;
+        for (String s : connection.getHeaderFields().keySet()) {
+            if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Transfer-Encoding")) {
+                result = connection.getHeaderField(s);
+                break;
+            }
+        }
+
+        return result != null && result.equalsIgnoreCase("chunked");
     }
 
     private static long getContentLength(HttpURLConnection connection) {
-        long l;
-        try {
-            l = Long.parseLong(connection.getHeaderField("Content-Length"));
-        } catch (Exception ignored) {
-            l = 0;
+        String result = null;
+        for (String s : connection.getHeaderFields().keySet()) {
+            if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Content-Length")) {
+                result = connection.getHeaderField(s);
+                break;
+            }
         }
-        return l;
+
+        try {
+            return Long.parseLong(result);
+        } catch (Exception ignored) {
+        }
+        return 0L;
     }
 
     private static String getLastModify(HttpURLConnection connection) {
-        return connection.getHeaderField("Last-Modified");
+        String result = null;
+        for (String s : connection.getHeaderFields().keySet()) {
+            if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Last-Modified")) {
+                result = connection.getHeaderField(s);
+                break;
+            }
+        }
+        return result;
     }
 
     private static String getEtag(HttpURLConnection connection) {
-        return connection.getHeaderField("Etag");
+        String result = null;
+        for (String s : connection.getHeaderFields().keySet()) {
+            if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("etag")) {
+                result = connection.getHeaderField(s);
+                break;
+            }
+        }
+        return result;
     }
 
     private static boolean isAcceptRanges(HttpURLConnection connection) {
-        String range = connection.getHeaderField("Accept-Ranges");
-        return range != null && range.equalsIgnoreCase("bytes");
+        String result = null;
+        for (String s : connection.getHeaderFields().keySet()) {
+            if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Accept-Ranges")) {
+                result = connection.getHeaderField(s);
+                break;
+            }
+        }
+
+        return result != null && result.equalsIgnoreCase("bytes");
     }
 
     /**

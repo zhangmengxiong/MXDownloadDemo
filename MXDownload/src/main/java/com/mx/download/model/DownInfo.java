@@ -19,7 +19,7 @@ public class DownInfo {
     public float curSpeedSize = 0f; // 当前下载速度
 
     private NetSpeedBean netSpeedBean = new NetSpeedBean(); // 网速计数器
-    private InfoBean infoBean; // 回调返回对象
+    private InfoBean infoBean = new InfoBean(this); // 回调返回对象
 
     /**
      * 计算网速
@@ -46,7 +46,6 @@ public class DownInfo {
     }
 
     public InfoBean getInfoBean() {
-        if (infoBean == null) infoBean = new InfoBean(this);
         return infoBean;
     }
 }

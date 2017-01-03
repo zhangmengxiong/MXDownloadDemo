@@ -15,6 +15,11 @@ public class InfoBean {
         downInfo = bean;
     }
 
+    /**
+     * 下载请求的Etag标记
+     *
+     * @return
+     */
     public String getEtag() {
         return downInfo.Etag;
     }
@@ -76,7 +81,7 @@ public class InfoBean {
     /**
      * 获得下载的百分比, 保留两位小数
      *
-     * @return example: 5.25%
+     * @return example: 0.05 --> 5.0 %
      */
     public float getPercent() {
         float result;

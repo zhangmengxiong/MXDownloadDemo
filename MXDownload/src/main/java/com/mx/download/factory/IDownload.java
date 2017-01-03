@@ -16,9 +16,9 @@ public interface IDownload {
      * 设置下载信息
      *
      * @param bean
-     * @param status
+     * @param info
      */
-    void setInfo(ConfigBean bean, DownInfo status);
+    void setInfo(ConfigBean bean, DownInfo info);
 
     /**
      * 准备下载的文件
