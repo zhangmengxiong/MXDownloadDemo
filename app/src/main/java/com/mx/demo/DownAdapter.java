@@ -90,19 +90,19 @@ public class DownAdapter extends BaseAdapter {
                                 }
 
                                 @Override
-                                public void onStart(InfoBean infoBean) {
+                                public void onStart(String url, InfoBean infoBean) {
                                     Log.v("proc", "onStart");
                                     viewHolder.progressBar.setProgress((int) (infoBean.getPercent() * 100));
                                 }
 
                                 @Override
-                                public void onError(Throwable th) {
+                                public void onError(String url, Throwable th) {
                                     Log.v("proc", "onError");
                                     viewHolder.info.setText("下载失败");
                                 }
 
                                 @Override
-                                public void onProgressUpdate(InfoBean infoBean) {
+                                public void onProgressUpdate(String url, InfoBean infoBean) {
                                     Log.v("proc", infoBean.getFormatSize());
                                     viewHolder.progressBar.setProgress((int) (infoBean.getPercent() * 100));
                                     viewHolder.info.setText(infoBean.getFormatSize() + " " + infoBean.getFormatSpeed());
@@ -116,7 +116,7 @@ public class DownAdapter extends BaseAdapter {
                                 }
 
                                 @Override
-                                public void onFinish() {
+                                public void onFinish(String url) {
                                     Log.v("proc", "onFinish");
                                 }
 

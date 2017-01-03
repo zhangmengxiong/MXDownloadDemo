@@ -87,7 +87,7 @@ class Download {
         }
 
         if (iDownLoadCall != null) {
-            iDownLoadCall.onStart(downInfo.infoBean);
+            iDownLoadCall.onStart(fromUrl, downInfo.infoBean);
         }
 
         iDownload.startDownload();

@@ -3,8 +3,8 @@ package com.mx.download.factory;
 import com.mx.download.factory.run.MultiDownloadRun;
 import com.mx.download.model.ConfigBean;
 import com.mx.download.model.DownChipBean;
-import com.mx.download.model.DownType;
 import com.mx.download.model.DownInfo;
+import com.mx.download.model.DownType;
 import com.mx.download.model.SaveBean;
 import com.mx.download.utils.FileUtil;
 import com.mx.download.utils.IDownLoadCall;
@@ -156,7 +156,7 @@ public class MultiDownload implements IDownload {
                 downInfo.computeSpeed();
                 speedInterceptor.setCurrentSpeed((int) (downInfo.curSpeedSize / 1024f));
                 if (downloadCall != null) {
-                    downloadCall.onProgressUpdate(downInfo.infoBean);
+                    downloadCall.onProgressUpdate(fromUrl, downInfo.infoBean);
                 }
 
                 Thread.sleep(SLEEP_TIME);// 每隔0.5秒更新一次下载位置信息
@@ -213,7 +213,7 @@ public class MultiDownload implements IDownload {
         downInfo.downloadSize = finishLength;
         downInfo.cleanSpeed();
         if (downloadCall != null) {
-            downloadCall.onProgressUpdate(downInfo.infoBean);
+            downloadCall.onProgressUpdate(fromUrl, downInfo.infoBean);
         }
     }
 

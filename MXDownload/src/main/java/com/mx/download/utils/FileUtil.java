@@ -1,8 +1,8 @@
 package com.mx.download.utils;
 
 import com.mx.download.model.DownChipBean;
-import com.mx.download.model.DownType;
 import com.mx.download.model.DownInfo;
+import com.mx.download.model.DownType;
 import com.mx.download.model.SaveBean;
 
 import java.io.File;

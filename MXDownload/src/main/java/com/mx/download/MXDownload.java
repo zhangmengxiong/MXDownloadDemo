@@ -111,34 +111,34 @@ public class MXDownload {
                 }
 
                 @Override
-                public void onStart(final InfoBean infoBean) {
+                public void onStart(final String fromUrl, final InfoBean infoBean) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (iDownLoadCall != null)
-                                iDownLoadCall.onStart(infoBean);
+                                iDownLoadCall.onStart(fromUrl, infoBean);
                         }
                     });
                 }
 
                 @Override
-                public void onError(final Throwable th) {
+                public void onError(final String fromUrl, final Throwable th) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (iDownLoadCall != null)
-                                iDownLoadCall.onError(th);
+                                iDownLoadCall.onError(fromUrl, th);
                         }
                     });
                 }
 
                 @Override
-                public void onProgressUpdate(final InfoBean infoBean) {
+                public void onProgressUpdate(final String fromUrl, final InfoBean infoBean) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (iDownLoadCall != null)
-                                iDownLoadCall.onProgressUpdate(infoBean);
+                                iDownLoadCall.onProgressUpdate(fromUrl, infoBean);
                         }
                     });
                 }
@@ -166,12 +166,12 @@ public class MXDownload {
                 }
 
                 @Override
-                public void onFinish() {
+                public void onFinish(final String url) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (iDownLoadCall != null)
-                                iDownLoadCall.onFinish();
+                                iDownLoadCall.onFinish(url);
                         }
                     });
                 }
@@ -236,11 +236,11 @@ public class MXDownload {
                 } catch (Exception e) {
                     e.printStackTrace();
                     if (configBean.getDownLoadCall() != null)
-                        configBean.getDownLoadCall().onError(e);
+                        configBean.getDownLoadCall().onError(configBean.getFromUrl(), e);
                 } finally {
                     cancel();
                     if (configBean.getDownLoadCall() != null)
-                        configBean.getDownLoadCall().onFinish();
+                        configBean.getDownLoadCall().onFinish(configBean.getFromUrl());
 
                     isInDownload.set(false);
                     configBean.getExecutorService().shutdownNow();
