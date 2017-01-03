@@ -134,7 +134,7 @@ public class Utils {
      * @return
      */
     public static DownInfo getFileSize(String fromUrl) {
-        DownInfo status = null;
+        DownInfo info = null;
         try {
             URL url = new URL(fromUrl);// 获取资源路径
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
@@ -145,23 +145,23 @@ public class Utils {
             conn.connect();
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {
-                status = new DownInfo();
-                status.lastModify = (getLastModify(conn));
-                status.Etag = (getEtag(conn));
+                info = new DownInfo();
+                info.lastModify = (getLastModify(conn));
+                info.Etag = (getEtag(conn));
 
                 long maxSize = getContentLength(conn);
-                status.isUnknownSize = (isChunked(conn) || maxSize <= 0);
-                status.isAcceptRanges = isAcceptRanges(conn);
+                info.isUnknownSize = (isChunked(conn) || maxSize <= 0);
+                info.isAcceptRanges = isAcceptRanges(conn);
 
-                status.downloadSize = 0;
-                status.totalSize = (maxSize <= 0 ? 0 : maxSize);
+                info.downloadSize = 0;
+                info.totalSize = (maxSize <= 0 ? 0 : maxSize);
 
                 Log.v(conn.getHeaderFields().toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            status = null;
+            info = null;
         }
-        return status;
+        return info;
     }
 }

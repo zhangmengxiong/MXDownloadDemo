@@ -111,12 +111,12 @@ public class MXDownload {
                 }
 
                 @Override
-                public void onStart(final InfoBean status) {
+                public void onStart(final InfoBean infoBean) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (iDownLoadCall != null)
-                                iDownLoadCall.onStart(status);
+                                iDownLoadCall.onStart(infoBean);
                         }
                     });
                 }
@@ -133,12 +133,12 @@ public class MXDownload {
                 }
 
                 @Override
-                public void onProgressUpdate(final InfoBean status) {
+                public void onProgressUpdate(final InfoBean infoBean) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             if (iDownLoadCall != null)
-                                iDownLoadCall.onProgressUpdate(status);
+                                iDownLoadCall.onProgressUpdate(infoBean);
                         }
                     });
                 }

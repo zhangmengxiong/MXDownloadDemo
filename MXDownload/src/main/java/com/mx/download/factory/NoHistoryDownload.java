@@ -39,8 +39,8 @@ public class NoHistoryDownload implements IDownload {
     private DownInfo downInfo;
 
     @Override
-    public void setInfo(ConfigBean configBean, DownInfo status) {
-        downInfo = status;
+    public void setInfo(ConfigBean configBean, DownInfo info) {
+        downInfo = info;
 
         this.retryMax = configBean.getMaxRetryCount();
         this.executor = configBean.getExecutorService();

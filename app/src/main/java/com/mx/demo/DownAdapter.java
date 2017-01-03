@@ -90,9 +90,9 @@ public class DownAdapter extends BaseAdapter {
                                 }
 
                                 @Override
-                                public void onStart(InfoBean status) {
+                                public void onStart(InfoBean infoBean) {
                                     Log.v("proc", "onStart");
-                                    viewHolder.progressBar.setProgress((int) (status.getPercent() * 100));
+                                    viewHolder.progressBar.setProgress((int) (infoBean.getPercent() * 100));
                                 }
 
                                 @Override
@@ -102,10 +102,10 @@ public class DownAdapter extends BaseAdapter {
                                 }
 
                                 @Override
-                                public void onProgressUpdate(InfoBean status) {
-                                    Log.v("proc", status.getFormatSize());
-                                    viewHolder.progressBar.setProgress((int) (status.getPercent() * 100));
-                                    viewHolder.info.setText(status.getFormatSize() + " " + status.getFormatSpeed());
+                                public void onProgressUpdate(InfoBean infoBean) {
+                                    Log.v("proc", infoBean.getFormatSize());
+                                    viewHolder.progressBar.setProgress((int) (infoBean.getPercent() * 100));
+                                    viewHolder.info.setText(infoBean.getFormatSize() + " " + infoBean.getFormatSpeed());
                                 }
 
                                 @Override
