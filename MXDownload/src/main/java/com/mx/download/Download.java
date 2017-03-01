@@ -106,7 +106,7 @@ class Download {
     }
 
     private void prepareUrl() throws Exception {
-        downInfo = Utils.getFileSize(fromUrl);
+        downInfo = Utils.getFileSize(fromUrl, configBean.getTimeOut());
         if (downInfo == null) {
             throw new Exception("获取服务器信息失败！");
         }

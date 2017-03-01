@@ -40,11 +40,13 @@ public class MultiDownload implements IDownload {
     private int retryMax = 3;
     private volatile SpeedInterceptor speedInterceptor;
     private DownInfo downInfo;
+    private int TIME_OUT;
 
     @Override
     public void setInfo(ConfigBean configBean, DownInfo info) {
         downInfo = info;
 
+        this.TIME_OUT = configBean.getTimeOut();
         this.retryMax = configBean.getMaxRetryCount();
         this.executor = configBean.getExecutorService();
         this.fromUrl = configBean.getFromUrl();
@@ -123,7 +125,7 @@ public class MultiDownload implements IDownload {
 
         MultiDownloadRun[] downloadThread = new MultiDownloadRun[chipBeans.length];
         for (int i = 0; i < chipBeans.length; i++) {
-            downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i], speedInterceptor);
+            downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i], speedInterceptor, TIME_OUT);
             executor.execute(downloadThread[i]);// 启动线程，开始下载
         }
         Log.v("Start Download Source : " + fromUrl);
@@ -141,7 +143,7 @@ public class MultiDownload implements IDownload {
             {
                 if (downloadThread[i].isInError()) {// 下载失败 重试
                     downloadThread[i].stop();
-                    downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i], speedInterceptor);
+                    downloadThread[i] = new MultiDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBeans[i], speedInterceptor, TIME_OUT);
                     errorNo++;
                     executor.execute(downloadThread[i]);
                 }

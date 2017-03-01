@@ -78,6 +78,7 @@ public class DownAdapter extends BaseAdapter {
                             .download(bean.URL) // 200M
                             .save(bean.SAVE)
                             .maxThread(7)
+                            .timeOut(1000 * 10)
                             .limitSpeed(1024 * 2)
 //                            .maxRetryCount(3)
 //                            .singleThread()

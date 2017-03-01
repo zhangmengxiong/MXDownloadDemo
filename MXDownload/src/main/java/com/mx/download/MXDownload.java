@@ -192,6 +192,17 @@ public class MXDownload {
     }
 
     /**
+     * 设置超时时间
+     *
+     * @param t
+     * @return
+     */
+    public MXDownload timeOut(int t) {
+        configBean.setTimeOut(t);
+        return this;
+    }
+
+    /**
      * 限速下载
      *
      * @param speed KB/s

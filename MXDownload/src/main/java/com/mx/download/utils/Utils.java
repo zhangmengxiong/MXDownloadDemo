@@ -133,15 +133,15 @@ public class Utils {
      * @param fromUrl
      * @return
      */
-    public static DownInfo getFileSize(String fromUrl) {
+    public static DownInfo getFileSize(String fromUrl, int time_out) {
         DownInfo info = null;
         try {
             URL url = new URL(fromUrl);// 获取资源路径
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
             conn.setRequestProperty("Accept-Ranges", "bytes");
             conn.setRequestProperty("Cache-Control", "no-cache");
-            conn.setReadTimeout(1000 * 15);
-            conn.setConnectTimeout(1000 * 15);
+            conn.setReadTimeout(time_out);
+            conn.setConnectTimeout(time_out);
             conn.connect();
             int stateCode = conn.getResponseCode();// 获取响应信息
             if (stateCode == HttpURLConnection.HTTP_OK) {

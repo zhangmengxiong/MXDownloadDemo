@@ -32,6 +32,7 @@ public class ConfigBean {
     private String tempFile;
     private String cacheFile;
     private int limitSpeed;
+    private int timeOut;
 
     public ConfigBean() {
     }
@@ -102,5 +103,13 @@ public class ConfigBean {
 
     public int getLimitSpeed() {
         return limitSpeed;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
+    }
+
+    public int getTimeOut() {
+        return timeOut > 0 ? timeOut : 1000 * 30;
     }
 }

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 多线程下载的下载器
  */
 public class MultiDownloadRun implements Runnable {
-    private static final int TIME_OUT = 15 * 1000;// 超时
+    private int TIME_OUT = 15 * 1000;// 超时
     private String sourceUrl;   // 下载资源路径
     private String savePath;    // 保存路径
     private String fileName;    // 保存的文件
@@ -25,12 +25,13 @@ public class MultiDownloadRun implements Runnable {
     private AtomicBoolean errorTag = new AtomicBoolean(false);// 该线程外部停止标记
     private SpeedInterceptor speedInterceptor;
 
-    public MultiDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen, SpeedInterceptor interceptor) {
+    public MultiDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen, SpeedInterceptor interceptor, int time_out) {
         this.sourceUrl = fromUrl;
         this.savePath = savePath;
         this.chipBeen = chipBeen;
         this.isStop.set(false);
         this.errorTag.set(false);
+        this.TIME_OUT = time_out;
         speedInterceptor = interceptor;
 
         fileName = new File(savePath).getName();

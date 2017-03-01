@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 联系方式: zmx_final@163.com
  */
 public class NoHistoryDownloadRun implements Runnable {
-    private static final int TIME_OUT = 15 * 1000;// 超时
+    private int TIME_OUT = 15 * 1000;// 超时
     private String sourceUrl;// 资源路径
     private String savePath;
     private String fileName;
@@ -28,7 +28,7 @@ public class NoHistoryDownloadRun implements Runnable {
     private AtomicBoolean isComplete = new AtomicBoolean(false);// 该线程外部停止标记
     private SpeedInterceptor speedInterceptor;
 
-    public NoHistoryDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen, SpeedInterceptor interceptor) {
+    public NoHistoryDownloadRun(String fromUrl, String savePath, DownChipBean chipBeen, SpeedInterceptor interceptor, int time_out) {
         this.sourceUrl = fromUrl;
         this.savePath = savePath;
         this.chipBeen = chipBeen;
@@ -36,6 +36,7 @@ public class NoHistoryDownloadRun implements Runnable {
         this.errorTag.set(false);
         speedInterceptor = interceptor;
         fileName = new File(savePath).getName();
+        this.TIME_OUT = time_out;
     }
 
     @Override

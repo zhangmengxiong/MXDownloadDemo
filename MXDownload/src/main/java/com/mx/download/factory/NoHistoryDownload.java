@@ -37,11 +37,13 @@ public class NoHistoryDownload implements IDownload {
     private int retryMax = 3;
     private volatile SpeedInterceptor speedInterceptor;
     private DownInfo downInfo;
+    private int TIME_OUT;
 
     @Override
     public void setInfo(ConfigBean configBean, DownInfo info) {
         downInfo = info;
 
+        this.TIME_OUT = configBean.getTimeOut();
         this.retryMax = configBean.getMaxRetryCount();
         this.executor = configBean.getExecutorService();
         this.fromUrl = configBean.getFromUrl();
@@ -81,7 +83,7 @@ public class NoHistoryDownload implements IDownload {
         downInfo.cleanSpeed();
         downInfo.computeSpeed();
 
-        NoHistoryDownloadRun downloadThread = new NoHistoryDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor);
+        NoHistoryDownloadRun downloadThread = new NoHistoryDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor, TIME_OUT);
         executor.execute(downloadThread);
 
         Log.v("Start Download Source : " + fromUrl);
@@ -96,7 +98,7 @@ public class NoHistoryDownload implements IDownload {
 
             if (downloadThread.isInError()) {// 下载失败 重试
                 downloadThread.stop();
-                downloadThread = new NoHistoryDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor);
+                downloadThread = new NoHistoryDownloadRun(fromUrl, cacheFile.getAbsolutePath(), chipBean, speedInterceptor, TIME_OUT);
                 errorNo++;
                 executor.execute(downloadThread);
             }
