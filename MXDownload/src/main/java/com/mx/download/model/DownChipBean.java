@@ -7,6 +7,8 @@ import java.io.Serializable;
  * Created by zmx_f on 2016-5-12.
  */
 public class DownChipBean implements Serializable {
+    private static final long serialVersionUID = 72836321321613254L;
+
     public long start = 0L;
     public long end = 0L;
 

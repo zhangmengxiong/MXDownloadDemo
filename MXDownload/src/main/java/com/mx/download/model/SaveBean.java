@@ -7,6 +7,8 @@ import java.io.Serializable;
  * Created by zmx_f on 2016-5-12.
  */
 public class SaveBean implements Serializable {
+    private static final long serialVersionUID = 7248325280613254L;
+
     public DownType type = DownType.TYPE_MULITY;
     public long fileSize;
     public long completeSize;
