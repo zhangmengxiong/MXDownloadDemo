@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 联系方式: zmx_final@163.com
  */
 public class SingleDownloadRun implements Runnable {
-    private int TIME_OUT = 15 * 1000;// 超时
+    private int TIME_OUT = 20 * 1000;// 超时
     private String sourceUrl;// 资源路径
     private String savePath;
     private String fileName;

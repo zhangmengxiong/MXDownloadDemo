@@ -64,6 +64,7 @@ public class FileUtil {
             size = (mb / 20) + 1;
         }
         if (size > 20) size = 20;
+        if (size < 1) size = 1;
         return size;
     }
 

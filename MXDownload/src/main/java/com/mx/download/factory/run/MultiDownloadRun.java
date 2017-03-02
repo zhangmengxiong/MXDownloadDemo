@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 多线程下载的下载器
  */
 public class MultiDownloadRun implements Runnable {
-    private int TIME_OUT = 15 * 1000;// 超时
+    private int TIME_OUT = 20 * 1000;// 超时
     private String sourceUrl;   // 下载资源路径
     private String savePath;    // 保存路径
     private String fileName;    // 保存的文件

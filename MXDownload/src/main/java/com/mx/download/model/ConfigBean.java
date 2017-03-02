@@ -110,6 +110,6 @@ public class ConfigBean {
     }
 
     public int getTimeOut() {
-        return timeOut > 0 ? timeOut : 1000 * 30;
+        return timeOut > 0 ? timeOut : 1000 * 20;
     }
 }
