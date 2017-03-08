@@ -11,7 +11,7 @@ import java.util.LinkedList;
 class NetSpeedBean {
     private static final int MAX_SIZE = 4;
     private final Object SYNC_OBJ = new Object();
-    private LinkedList<NodeBean> speedQueue = new LinkedList<>();
+    private LinkedList<NodeBean> speedQueue = new LinkedList<NodeBean>();
 
     /**
      * 新增一个节点！
