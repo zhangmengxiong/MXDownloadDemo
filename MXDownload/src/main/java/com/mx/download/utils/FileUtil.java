@@ -176,8 +176,11 @@ public class FileUtil {
      */
     public static boolean createFile(File file) throws IOException {
         if (file == null) return false;
-        File file1 = file.getParentFile();
-        if (!file1.exists()) file1.mkdirs();
+        Log.v("createFile()： " + file.getAbsolutePath());
+
+        if (file.exists()) return true;
+        File p = file.getParentFile();
+        if (!p.exists()) p.mkdirs();
         return file.createNewFile();
     }
 
