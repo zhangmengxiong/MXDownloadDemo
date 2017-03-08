@@ -135,32 +135,35 @@ public class Utils {
      */
     public static DownInfo getFileSize(String fromUrl, int time_out) {
         DownInfo info = null;
-        try {
-            URL url = new URL(fromUrl);// 获取资源路径
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
-            conn.setRequestProperty("Accept-Ranges", "bytes");
-            conn.setRequestProperty("Cache-Control", "no-cache");
-            conn.setReadTimeout(time_out);
-            conn.setConnectTimeout(time_out);
-            conn.connect();
-            int stateCode = conn.getResponseCode();// 获取响应信息
-            if (stateCode == HttpURLConnection.HTTP_OK) {
-                info = new DownInfo();
-                info.lastModify = (getLastModify(conn));
-                info.Etag = (getEtag(conn));
+        for (int i = 0; i < 3; i++) {
+            try {
+                URL url = new URL(fromUrl);// 获取资源路径
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
+                conn.setRequestProperty("Accept-Ranges", "bytes");
+                conn.setRequestProperty("Cache-Control", "no-cache");
+                conn.setReadTimeout(time_out);
+                conn.setConnectTimeout(time_out);
+                conn.connect();
+                int stateCode = conn.getResponseCode();// 获取响应信息
+                if (stateCode == HttpURLConnection.HTTP_OK) {
+                    info = new DownInfo();
+                    info.lastModify = (getLastModify(conn));
+                    info.Etag = (getEtag(conn));
 
-                long maxSize = getContentLength(conn);
-                info.isUnknownSize = (isChunked(conn) || maxSize <= 0);
-                info.isAcceptRanges = isAcceptRanges(conn);
+                    long maxSize = getContentLength(conn);
+                    info.isUnknownSize = (isChunked(conn) || maxSize <= 0);
+                    info.isAcceptRanges = isAcceptRanges(conn);
 
-                info.downloadSize = 0;
-                info.totalSize = (maxSize <= 0 ? 0 : maxSize);
+                    info.downloadSize = 0;
+                    info.totalSize = (maxSize <= 0 ? 0 : maxSize);
 
-                Log.v(conn.getHeaderFields().toString());
+                    Log.v(conn.getHeaderFields().toString());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                info = null;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            info = null;
+            if (info != null) break;
         }
         return info;
     }
