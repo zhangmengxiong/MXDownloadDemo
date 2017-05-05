@@ -8,6 +8,7 @@ import java.io.Closeable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 public class Utils {
     public static String formatSize(long size) {
@@ -115,16 +116,36 @@ public class Utils {
         return result;
     }
 
+    /**
+     * 判断是否支持断点续传
+     *
+     * @param connection
+     * @return
+     */
     private static boolean isAcceptRanges(HttpURLConnection connection) {
-        String result = null;
+        String accept = null;
+        String content = null;
         for (String s : connection.getHeaderFields().keySet()) {
             if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Accept-Ranges")) {
-                result = connection.getHeaderField(s).trim();
+                try {
+                    accept = connection.getHeaderField(s).trim();
+                } catch (Exception ignored) {
+                }
+
+                break;
+            }
+            if (!TextUtils.isEmpty(s) && s.equalsIgnoreCase("Content-Range")) {
+                try {
+                    content = connection.getHeaderField(s).trim();
+                } catch (Exception ignored) {
+                }
+
                 break;
             }
         }
 
-        return result != null && result.equalsIgnoreCase("bytes");
+        return (accept != null && accept.equalsIgnoreCase("bytes"))
+                || (content != null && content.toLowerCase(Locale.ENGLISH).contains("bytes"));
     }
 
     /**
@@ -141,11 +162,12 @@ public class Utils {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();// 创建URL连接
                 conn.setRequestProperty("Accept-Ranges", "bytes");
                 conn.setRequestProperty("Cache-Control", "no-cache");
+                conn.setRequestProperty("RANGE", "bytes=0-"); // 判断可以跳转不
                 conn.setReadTimeout(time_out);
                 conn.setConnectTimeout(time_out);
                 conn.connect();
                 int stateCode = conn.getResponseCode();// 获取响应信息
-                if (stateCode == HttpURLConnection.HTTP_OK) {
+                if (stateCode >= HttpURLConnection.HTTP_OK && stateCode <= HttpURLConnection.HTTP_PARTIAL) {
                     info = new DownInfo();
                     info.lastModify = (getLastModify(conn));
                     info.Etag = (getEtag(conn));
